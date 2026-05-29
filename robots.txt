@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://turki-sh.github.io/HARIS/sitemap.xml

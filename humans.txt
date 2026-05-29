@@ -1,0 +1,26 @@
+HARIS
+
+Team:
+Turki Alshuaibi, Team Leader
+Hamza Alzahrani, Team Member
+Aseel Alsaid, Team Member
+Anas Alghamdi, Team Member
+Khalid Alomair, Team Member
+
+Site:
+Name: HARIS
+Full name: Hostile Activity Recognition and Intelligence System
+URL: https://turki-sh.github.io/HARIS/
+LinkedIn: https://www.linkedin.com/in/turki-alshuaibi/
+
+Technology:
+HTML
+CSS
+JavaScript
+GitHub Pages
+
+Project:
+HARIS is a university graduation project from Imam Abdulrahman Bin Faisal University focused on hostile activity recognition in CCTV footage through an auditable computer vision pipeline.
+
+Last updated:
+2026-05-29

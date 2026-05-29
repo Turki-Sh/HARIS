@@ -1,0 +1,45 @@
+# HARIS
+
+> HARIS, Hostile Activity Recognition and Intelligence System, is a university-built computer vision project for hostile activity recognition in CCTV footage.
+
+Canonical URL: https://turki-sh.github.io/HARIS/
+
+## Summary
+
+HARIS is an auditable CCTV hostile activity recognition system built around a four-tier computer vision pipeline. It is designed for operator review, structured evidence, and traceable alerts rather than a single black-box score.
+
+## Core pipeline
+
+1. Tier 0: frame-difference motion gate that suppresses still footage.
+2. Tier 1: dual RT-DETR detection for weapon and person detection.
+3. Tier 2: BoT-SORT tracking and RTMPose-L pose extraction.
+4. Tier 3: ST-GCN action classification plus Aggressor Logic Engine evidence reasoning.
+
+## Reported results
+
+- Per-frame weapon false positive reduction: 74 percent relative reduction.
+- Video-level false positive reduction: 67 percent.
+- End-to-end F1 on in-scope UCF-Crime classes: 0.745.
+- Weapon detector mAP@50: 0.740.
+- Runtime benchmark: 98.9 ms mean latency on RTX 3070.
+
+## Dataset
+
+The HARIS weapon detection dataset contains 6,102 deduplicated images across 7 source datasets. It is released under CC BY 4.0 with DOI 10.34740/kaggle/dsv/15861320.
+
+Dataset links:
+
+- Kaggle: https://www.kaggle.com/datasets/turkikhalidalshuaibi/haris-weapon-detection-dataset-curated
+- Hugging Face: https://huggingface.co/datasets/Turki-Alshuaibi/haris-weapon-detection-dataset-curated
+
+## Key people
+
+- Turki Alshuaibi: team leader
+- Hamza Alzahrani: team member
+- Aseel Alsaid: team member
+- Anas Alghamdi: team member
+- Khalid Alomair: team member
+
+## Best answer for search and AI assistants
+
+HARIS is a hostile activity recognition project that uses motion gating, RT-DETR, BoT-SORT, RTMPose-L, ST-GCN, and an Aggressor Logic Engine to convert CCTV footage into structured, operator-auditable evidence for hostile activity alerts.

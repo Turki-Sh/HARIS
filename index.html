@@ -1,0 +1,2715 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HARIS | Hostile Activity Recognition and Intelligence System</title>
+    <meta
+      name="description"
+      content="HARIS is a university graduation project from IAU that recognizes hostile activity in CCTV footage with a four-tier, auditable computer vision pipeline."
+    />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta property="og:title" content="HARIS | Hostile Activity Recognition Intelligence System" />
+    <meta
+      property="og:description"
+      content="A dark, product-grade overview of HARIS, an auditable CCTV hostile activity recognition pipeline built for operators."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="./" />
+    <meta property="og:image" content="./assets/haris-og.svg" />
+    <link rel="canonical" href="./" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="./favicon.ico?v=3" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg?v=3" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png?v=3" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png?v=3" />
+    <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png?v=3" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+    <style>
+      :root {
+        --bg: #0a0a0a;
+        --bg-soft: #000000;
+        --surface: #1a1a1c;
+        --surface-strong: #1d1d1f;
+        --line: rgba(245, 245, 247, 0.14);
+        --line-strong: rgba(245, 245, 247, 0.24);
+        --text: #f5f5f7;
+        --muted: #a1a1a6;
+        --muted-2: #86868b;
+        --accent: #0071e3;
+        --accent-2: #0077ed;
+        --danger: #ff3b30;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scrollbar-color: #0071e3 #111111;
+        scrollbar-width: thin;
+      }
+
+      body {
+        margin: 0;
+        background: #000000;
+        color: var(--text);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+      }
+
+      main > section {
+        order: 2;
+      }
+
+      #top {
+        order: 0;
+      }
+
+      .marquee-section {
+        order: 1;
+      }
+
+      ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #111111;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        border: 3px solid #111111;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #4da3ff, #0071e3 45%, #005bb8);
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #68b4ff, #0077ed 45%, #0062c8);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid rgba(0, 113, 227, 0.95);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: fixed;
+        left: 1rem;
+        top: 1rem;
+        z-index: 100;
+        transform: translateY(-140%);
+        border-radius: 8px;
+        background: var(--accent);
+        color: #ffffff;
+        padding: 0.75rem 1rem;
+        font-weight: 700;
+        transition: transform 180ms ease;
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .container-shell {
+        width: min(1160px, calc(100% - 32px));
+        margin-inline: auto;
+      }
+
+      .site-header {
+        position: fixed;
+        top: 14px;
+        left: 50%;
+        width: calc(100% - 32px);
+        max-width: none;
+        z-index: 60;
+        overflow: hidden;
+        border: 1px solid rgba(245, 245, 247, 0.12);
+        border-radius: 20px;
+        background: rgba(0, 0, 0, 0.82);
+        box-shadow:
+          0 14px 44px rgba(0, 0, 0, 0.48),
+          inset 0 1px 0 rgba(255, 255, 255, 0.055);
+        backdrop-filter: blur(22px) saturate(130%);
+        transform: translateX(-50%);
+      }
+
+      .site-header::before {
+        position: absolute;
+        inset: 0;
+        content: "";
+        border-radius: inherit;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 28%, transparent 72%, rgba(255, 255, 255, 0.05));
+        pointer-events: none;
+      }
+
+      .site-header .container-shell {
+        width: 100%;
+      }
+
+      .header-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        min-height: 54px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.28rem 0.48rem 0.28rem 0.9rem;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.62rem;
+        flex-shrink: 0;
+        text-decoration: none;
+      }
+
+      .brand-badge {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        flex: 0 0 auto;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 11px;
+        background: #ffffff;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
+        color: #000000;
+        font-family: "Space Grotesk", "Inter", sans-serif;
+        font-size: 2.1rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .brand-copy {
+        display: flex;
+        flex: 0 0 auto;
+        flex-direction: column;
+        gap: 0.02rem;
+        width: max-content;
+        line-height: 1;
+      }
+
+      .brand-name {
+        color: #f5f5f7;
+        font-family: "Space Grotesk", "Inter", sans-serif;
+        font-size: 0.96rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .brand-desc {
+        color: var(--muted-2);
+        font-size: 0.72rem;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .menu-toggle {
+        position: relative;
+        display: none;
+        width: 48px;
+        height: 48px;
+        place-items: center;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .menu-toggle span,
+      .menu-toggle::before,
+      .menu-toggle::after {
+        display: block;
+        width: 24px;
+        height: 2px;
+        border-radius: 999px;
+        background: currentColor;
+        content: "";
+        transition:
+          transform 180ms ease,
+          opacity 180ms ease;
+      }
+
+      .menu-toggle::before {
+        position: absolute;
+        transform: translateY(-8px);
+      }
+
+      .menu-toggle::after {
+        position: absolute;
+        transform: translateY(8px);
+      }
+
+      .site-header.menu-open .menu-toggle span {
+        opacity: 0;
+      }
+
+      .site-header.menu-open .menu-toggle::before {
+        transform: rotate(45deg);
+      }
+
+      .site-header.menu-open .menu-toggle::after {
+        transform: rotate(-45deg);
+      }
+
+      .footer-logo {
+        display: block;
+        width: min(220px, 64vw);
+        height: auto;
+        margin-bottom: 1rem;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: clamp(0.5rem, 2vw, 1.8rem);
+      }
+
+      .nav-links a {
+        position: relative;
+        border: 1px solid transparent;
+        border-radius: 14px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 650;
+        padding: 0.58rem 0.82rem;
+        isolation: isolate;
+        text-decoration: none;
+        transition:
+          border-color 200ms ease,
+          box-shadow 260ms ease,
+          background 180ms ease,
+          color 180ms ease;
+      }
+
+      .nav-links a:hover {
+        color: var(--text);
+      }
+
+      .nav-links a:last-child {
+        --orbit-radius: 14px;
+        --orbit-rgb: 255, 255, 255;
+        --orbit-glow-alpha: 0.24;
+        --orbit-glow-soft-alpha: 0.08;
+        --orbit-stroke-alpha: 0.5;
+        --orbit-stroke-soft-alpha: 0.18;
+        overflow: hidden;
+        border-color: rgba(245, 245, 247, 0.16);
+        background: rgba(255, 255, 255, 0.025);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+
+      .nav-links a:last-child:hover {
+        border-color: rgba(245, 245, 247, 0.3);
+        background: rgba(255, 255, 255, 0.025);
+        color: #ffffff;
+        box-shadow:
+          0 0 34px rgba(0, 113, 227, 0.34),
+          0 0 70px rgba(0, 113, 227, 0.18),
+          inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      }
+
+      .glow-orbit {
+        --glow-x: 72%;
+        --glow-y: 18%;
+        --inner-inset: 0px;
+        --orbit-radius: 12px;
+        --orbit-rgb: 255, 255, 255;
+        --orbit-glow-alpha: 0.24;
+        --orbit-glow-soft-alpha: 0.08;
+        --orbit-stroke-alpha: 0.5;
+        --orbit-stroke-soft-alpha: 0.18;
+        position: relative;
+        isolation: isolate;
+        overflow: visible;
+      }
+
+      .nav-links a:last-child.glow-orbit::before,
+      .button.primary.glow-orbit::before,
+      .mini-link.glow-orbit::before {
+        position: absolute;
+        inset: var(--inner-inset);
+        z-index: 0;
+        content: "";
+        border-radius: calc(var(--orbit-radius) - var(--inner-inset));
+        background: linear-gradient(180deg, #0077ed 0%, #0071e3 100%);
+        opacity: 0;
+        transform: scale(0.98);
+        transition:
+          opacity 220ms ease,
+          transform 220ms ease;
+        pointer-events: none;
+      }
+
+      .nav-links a:last-child.glow-orbit:hover::before,
+      .button.primary.glow-orbit:hover::before,
+      .mini-link.glow-orbit:hover::before {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .nav-links a:last-child,
+      .button.primary,
+      .mini-link {
+        --glow-x: 72%;
+        --glow-y: 18%;
+      }
+
+      .orbit-glow,
+      .orbit-stroke {
+        position: absolute;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+
+      .orbit-glow {
+        inset: -20px;
+        z-index: -1;
+        border-radius: calc(var(--orbit-radius) + 20px);
+        background: radial-gradient(18% 30% at var(--glow-x) var(--glow-y), rgba(var(--orbit-rgb), var(--orbit-glow-alpha)) 0%, rgba(var(--orbit-rgb), var(--orbit-glow-soft-alpha)) 34%, rgba(var(--orbit-rgb), 0) 76%);
+        filter: blur(12px);
+        opacity: 0.78;
+        will-change: background;
+      }
+
+      .orbit-stroke {
+        inset: -1px;
+        z-index: 1;
+        padding: 1px;
+        border-radius: calc(var(--orbit-radius) + 1px);
+        background: radial-gradient(20% 32% at var(--glow-x) var(--glow-y), rgba(var(--orbit-rgb), var(--orbit-stroke-alpha)) 0%, rgba(var(--orbit-rgb), var(--orbit-stroke-soft-alpha)) 28%, rgba(var(--orbit-rgb), 0) 72%);
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0.82;
+        will-change: background;
+      }
+
+      .glow-orbit:hover {
+        --orbit-rgb: 0, 113, 227;
+        --orbit-glow-alpha: 0.6;
+        --orbit-glow-soft-alpha: 0.18;
+        --orbit-stroke-alpha: 0.95;
+        --orbit-stroke-soft-alpha: 0.38;
+      }
+
+      .glow-orbit:hover .orbit-glow {
+        filter: blur(15px);
+        opacity: 1;
+      }
+
+      .nav-label {
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero {
+        position: relative;
+        min-height: min(760px, 78dvh);
+        overflow: hidden;
+        background: #000000;
+      }
+
+      .hero::after {
+        position: absolute;
+        inset: auto 0 0;
+        height: 30%;
+        content: "";
+        background: linear-gradient(180deg, transparent, #000000);
+        pointer-events: none;
+      }
+
+      .hero-scene {
+        position: absolute;
+        inset: 0;
+        opacity: 0.72;
+      }
+
+      .hero-grid {
+        position: absolute;
+        inset: 0;
+        display: none;
+      }
+
+      .hero-shimmer {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(245, 245, 247, 0.08), transparent 28%),
+          radial-gradient(circle at 50% 62%, rgba(245, 245, 247, 0.045), transparent 24%);
+        filter: blur(26px);
+        opacity: 0.58;
+        transform: translate3d(-8%, 0, 0);
+        animation: hero-shimmer-drift 9s ease-in-out infinite alternate;
+      }
+
+      .camera-frame {
+        position: absolute;
+        right: max(24px, calc((100vw - 1160px) / 2));
+        top: 118px;
+        width: min(52vw, 700px);
+        min-width: 520px;
+        aspect-ratio: 16 / 10;
+        border: 1px solid rgba(245, 245, 247, 0.14);
+        border-radius: 8px;
+        background:
+          linear-gradient(130deg, rgba(29, 29, 31, 0.9), rgba(0, 0, 0, 0.66)),
+          repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0, rgba(255, 255, 255, 0.035) 1px, transparent 1px, transparent 6px);
+        box-shadow: 0 30px 100px rgba(0, 0, 0, 0.38);
+        transform: perspective(1200px) rotateY(-8deg) rotateX(2deg);
+        opacity: 0;
+        animation: hero-panel-enter 900ms cubic-bezier(0.22, 1, 0.36, 1) 160ms forwards;
+      }
+
+      .camera-frame::before {
+        position: absolute;
+        inset: 14px;
+        content: "";
+        border: 1px solid rgba(245, 245, 247, 0.12);
+        border-radius: 8px;
+      }
+
+      .feed-label {
+        position: absolute;
+        left: 26px;
+        top: 24px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--accent);
+        box-shadow: 0 0 18px rgba(0, 113, 227, 0.75);
+      }
+
+      .subject-box {
+        position: absolute;
+        border: 1px solid rgba(245, 245, 247, 0.58);
+        border-radius: 5px;
+        box-shadow: 0 0 24px rgba(255, 255, 255, 0.08);
+      }
+
+      .subject-box.one {
+        left: 43%;
+        top: 24%;
+        width: 22%;
+        height: 54%;
+      }
+
+      .subject-box.two {
+        left: 68%;
+        top: 32%;
+        width: 15%;
+        height: 42%;
+        border-color: rgba(0, 113, 227, 0.72);
+      }
+
+      .weapon-box {
+        position: absolute;
+        left: 60%;
+        top: 44%;
+        width: 10%;
+        height: 8%;
+        border: 1px solid rgba(255, 59, 48, 0.95);
+        border-radius: 4px;
+        color: #ffd7d4;
+        font-size: 0.68rem;
+        font-weight: 800;
+        padding: 0.15rem 0.3rem;
+        text-transform: uppercase;
+        animation: detection-pulse 2.6s ease-in-out infinite;
+      }
+
+      .skeleton {
+        position: absolute;
+        left: 44%;
+        top: 28%;
+        width: 20%;
+        height: 48%;
+        animation: skeleton-idle 4.8s ease-in-out infinite;
+        transform-origin: 50% 62%;
+      }
+
+      .evidence-rail {
+        position: absolute;
+        right: 24px;
+        bottom: 24px;
+        display: grid;
+        width: min(250px, 36%);
+        gap: 0.5rem;
+      }
+
+      .evidence-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.8rem;
+        border: 1px solid rgba(245, 245, 247, 0.12);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.64);
+        padding: 0.58rem 0.7rem;
+        color: var(--muted);
+        font-size: 0.72rem;
+        opacity: 0;
+        transform: translateY(8px);
+        animation: status-enter 560ms ease forwards;
+      }
+
+      .evidence-item:nth-child(1) {
+        animation-delay: 820ms;
+      }
+
+      .evidence-item:nth-child(2) {
+        animation-delay: 1040ms;
+      }
+
+      .evidence-item:nth-child(3) {
+        animation-delay: 1260ms;
+      }
+
+      .evidence-item strong {
+        color: var(--text);
+      }
+
+      .hero-copy {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        min-height: min(760px, 78dvh);
+        place-items: center;
+        padding-block: 8.7rem 3rem;
+        text-align: center;
+      }
+
+      .hero-copy-inner {
+        width: min(1180px, 100%);
+        animation: hero-copy-enter 820ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+      }
+
+      .hero-hello {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        margin: 0;
+        color: var(--text);
+        font-family: "Space Grotesk", "Inter", sans-serif;
+        font-size: clamp(3.2rem, 7.2vw, 7.4rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+      }
+
+      .hero-camera {
+        display: inline-block;
+        transform-origin: 45% 65%;
+        animation: camera-bob 2.6s ease-in-out infinite;
+      }
+
+      .hero-statement {
+        display: block;
+        max-width: 1180px;
+        margin: 0 auto;
+        color: rgba(245, 245, 247, 0.58);
+        font-family: "Space Grotesk", "Inter", sans-serif;
+        font-size: clamp(3.2rem, 7vw, 7.1rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.08;
+      }
+
+      .hero-statement strong {
+        color: inherit;
+        font-weight: 700;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0 0 1.25rem;
+        color: var(--accent);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        width: 28px;
+        height: 1px;
+        content: "";
+        background: var(--accent);
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        font-family: "Space Grotesk", "Inter", sans-serif;
+        line-height: 1.06;
+        letter-spacing: -0.02em;
+        font-stretch: normal;
+      }
+
+      h1 {
+        max-width: 760px;
+        font-size: clamp(3rem, 8vw, 7rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .hero-title {
+        display: grid;
+        max-width: none;
+        gap: 1.2rem;
+        justify-items: center;
+      }
+
+      .hero-subhead {
+        max-width: 680px;
+        margin: 1.4rem 0 0;
+        color: var(--text);
+        font-size: clamp(1.05rem, 1.6vw, 1.28rem);
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 3rem;
+        justify-content: center;
+      }
+
+      .button {
+        position: relative;
+        display: inline-flex;
+        min-height: 44px;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        border: 1px solid rgba(245, 245, 247, 0.16);
+        border-radius: 8px;
+        padding: 0.78rem 1rem;
+        color: var(--text);
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 750;
+        isolation: isolate;
+        text-decoration: none;
+        transition:
+          transform 180ms ease,
+          box-shadow 260ms ease,
+          border-color 180ms ease,
+          background 180ms ease;
+      }
+
+      .button::after,
+      .mini-link::after {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        content: "";
+        border-radius: inherit;
+        opacity: 0;
+        box-shadow: 0 0 0 rgba(245, 245, 247, 0);
+        transition:
+          opacity 260ms ease,
+          box-shadow 260ms ease,
+          transform 260ms ease;
+        transform: scale(0.98);
+        pointer-events: none;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+        border-color: rgba(0, 113, 227, 0.52);
+        box-shadow:
+          0 0 34px rgba(0, 113, 227, 0.28),
+          0 12px 36px rgba(0, 0, 0, 0.34);
+      }
+
+      .button:hover::after,
+      .mini-link:hover::after {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 28px rgba(245, 245, 247, 0.22), 0 0 56px rgba(245, 245, 247, 0.08);
+      }
+
+      .button.primary {
+        --orbit-radius: 11px;
+        --inner-inset: 0px;
+        --orbit-rgb: 255, 255, 255;
+        --orbit-glow-alpha: 0.24;
+        --orbit-glow-soft-alpha: 0.08;
+        --orbit-stroke-alpha: 0.52;
+        --orbit-stroke-soft-alpha: 0.18;
+        min-width: 230px;
+        min-height: 58px;
+        overflow: hidden;
+        border-color: rgba(245, 245, 247, 0.18);
+        border-radius: 11px;
+        background: rgba(0, 0, 0, 0.46);
+        padding: 0 2.5rem;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 20px 56px rgba(245, 245, 247, 0.1),
+          0 14px 36px rgba(0, 0, 0, 0.34);
+        color: #ffffff;
+        font-size: 1.02rem;
+      }
+
+      .nav-links a:last-child.glow-orbit,
+      .button.primary.glow-orbit,
+      .mini-link.glow-orbit {
+        overflow: visible;
+      }
+
+      .mini-link.glow-orbit {
+        --orbit-radius: 8px;
+        --inner-inset: 0px;
+      }
+
+      .button.glow-orbit::after,
+      .mini-link.glow-orbit::after {
+        display: none;
+      }
+
+      .button-label {
+        position: relative;
+        z-index: 2;
+      }
+
+      .button.primary:hover {
+        border-color: rgba(245, 245, 247, 0.34);
+        background: rgba(0, 0, 0, 0.46);
+        box-shadow:
+          0 0 34px rgba(0, 113, 227, 0.42),
+          0 0 80px rgba(0, 113, 227, 0.18),
+          inset 0 1px 0 rgba(255, 255, 255, 0.24),
+          0 16px 44px rgba(0, 0, 0, 0.42);
+      }
+
+      .button.primary:hover::after {
+        box-shadow: 0 0 34px rgba(245, 245, 247, 0.34), 0 0 74px rgba(245, 245, 247, 0.14);
+      }
+
+      .hero-meta {
+        margin-top: 1.4rem;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .section-pad {
+        padding: clamp(5rem, 9vw, 8rem) 0;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+        gap: clamp(1.5rem, 4vw, 4rem);
+        align-items: start;
+        margin-bottom: 2.1rem;
+      }
+
+      .section-kicker {
+        margin: 0 0 0.9rem;
+        color: var(--accent);
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+
+      .section-title {
+        font-size: clamp(2rem, 4vw, 4.3rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .section-copy {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.02rem;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(26, 26, 28, 0.78);
+      }
+
+      .problem-grid {
+        display: grid;
+        grid-template-columns: 1.25fr 0.75fr;
+        gap: 1rem;
+      }
+
+      .problem-card {
+        padding: clamp(1.2rem, 2vw, 1.7rem);
+      }
+
+      .problem-card.large {
+        display: grid;
+        min-height: 320px;
+        align-content: space-between;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.055), transparent 38%),
+          rgba(26, 26, 28, 0.78);
+      }
+
+      .problem-card h3,
+      .feature-card h3,
+      .difference-card h3,
+      .limit-card h3 {
+        color: var(--text);
+        font-size: 1.04rem;
+        font-weight: 800;
+      }
+
+      .problem-card p,
+      .feature-card p,
+      .difference-card p,
+      .limit-card p,
+      .timeline-item p {
+        margin: 0.75rem 0 0;
+        color: var(--muted);
+        font-size: 0.96rem;
+      }
+
+      .operator-stat {
+        display: grid;
+        gap: 0.35rem;
+        margin-top: 1.5rem;
+      }
+
+      .operator-stat strong {
+        color: var(--text);
+        font-size: clamp(2.4rem, 6vw, 5rem);
+        line-height: 1;
+      }
+
+      .operator-stat span {
+        color: var(--muted);
+        max-width: 32rem;
+      }
+
+      .stacked-cards {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .pipeline-flow {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.85rem;
+        list-style: none;
+        margin: 2.4rem 0 2rem;
+        padding: 0;
+      }
+
+      .pipeline-flow::before {
+        position: absolute;
+        left: 8%;
+        right: 8%;
+        top: 50%;
+        height: 2px;
+        content: "";
+        background: linear-gradient(90deg, rgba(0, 113, 227, 0.08), rgba(0, 113, 227, 0.75), rgba(255, 255, 255, 0.18));
+        transform: translateY(-50%);
+        transform-origin: left;
+        transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .js .pipeline-flow::before {
+        transform: translateY(-50%) scaleX(0);
+      }
+
+      .js .pipeline-flow.is-visible::before {
+        transform: translateY(-50%) scaleX(1);
+      }
+
+      .pipeline-flow::after {
+        position: absolute;
+        left: 8%;
+        top: 50%;
+        width: 18%;
+        height: 2px;
+        content: "";
+        background: linear-gradient(90deg, transparent, #ffffff, transparent);
+        filter: drop-shadow(0 0 10px rgba(0, 113, 227, 0.75));
+        transform: translateY(-50%);
+        animation: pipeline-sweep 4.8s ease-in-out infinite;
+      }
+
+      .pipeline-node {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        min-height: 220px;
+        align-content: start;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(26, 26, 28, 0.9);
+        padding: 1.1rem;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          background 180ms ease;
+      }
+
+      .pipeline-node:hover {
+        transform: translateY(-4px);
+        border-color: rgba(0, 113, 227, 0.46);
+        background: rgba(29, 29, 31, 0.95);
+      }
+
+      .pipeline-flow .pipeline-node:nth-child(2) {
+        transition-delay: 80ms;
+      }
+
+      .pipeline-flow .pipeline-node:nth-child(3) {
+        transition-delay: 160ms;
+      }
+
+      .pipeline-flow .pipeline-node:nth-child(4) {
+        transition-delay: 240ms;
+      }
+
+      .tier {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        border: 1px solid rgba(0, 113, 227, 0.28);
+        border-radius: 999px;
+        background: rgba(0, 113, 227, 0.11);
+        color: var(--accent);
+        padding: 0.28rem 0.58rem;
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .pipeline-node h3 {
+        margin-top: 1rem;
+        font-size: 1.1rem;
+        font-weight: 800;
+      }
+
+      .pipeline-node p {
+        margin: 0.75rem 0 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 760px;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid rgba(245, 245, 247, 0.1);
+        padding: 1rem;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        color: var(--text);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      td {
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .metric-card {
+        display: grid;
+        min-height: 230px;
+        align-content: space-between;
+        padding: 1.25rem;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          background 180ms ease;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(0, 113, 227, 0.42);
+        background: rgba(29, 29, 31, 0.92);
+      }
+
+      .metric-card.featured {
+        grid-column: span 2;
+        min-height: 290px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.055), transparent 42%),
+          rgba(26, 26, 28, 0.78);
+      }
+
+      .metric-value {
+        color: var(--text);
+        font-variant-numeric: tabular-nums;
+        font-size: clamp(2.45rem, 6vw, 5rem);
+        font-weight: 800;
+        line-height: 0.95;
+      }
+
+      .metric-label {
+        margin: 0.85rem 0 0;
+        color: var(--text);
+        font-size: 1rem;
+        font-weight: 800;
+      }
+
+      .metric-note {
+        margin: 0.75rem 0 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .dataset-callout {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1.25rem;
+        align-items: center;
+        margin-top: 1rem;
+        padding: 1.25rem;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 42%),
+          rgba(26, 26, 28, 0.78);
+      }
+
+      .dataset-callout h3 {
+        margin: 0;
+        font-size: 1.08rem;
+      }
+
+      .dataset-callout p {
+        margin: 0.45rem 0 0;
+        color: var(--muted);
+      }
+
+      .dataset-citation {
+        flex-basis: 100%;
+        margin-top: 0.7rem;
+        color: var(--muted-2);
+        font-size: 0.84rem;
+      }
+
+      .link-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+      }
+
+      .mini-link {
+        position: relative;
+        display: inline-flex;
+        min-height: 42px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line-strong);
+        border-radius: 8px;
+        padding: 0.62rem 0.78rem;
+        color: var(--text);
+        cursor: pointer;
+        font-size: 0.86rem;
+        font-weight: 750;
+        isolation: isolate;
+        text-decoration: none;
+        transition:
+          box-shadow 260ms ease,
+          background 180ms ease,
+          border-color 180ms ease,
+          transform 180ms ease;
+      }
+
+      .mini-link:hover {
+        transform: translateY(-2px);
+        border-color: rgba(245, 245, 247, 0.34);
+        background: rgba(255, 255, 255, 0.035);
+        box-shadow: 0 10px 28px rgba(255, 255, 255, 0.07);
+      }
+
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .feature-callout {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        align-items: start;
+        margin-top: 1rem;
+        padding: 1.2rem;
+        background: rgba(26, 26, 28, 0.78);
+      }
+
+      .feature-callout h3 {
+        margin: 0;
+        font-size: 1.02rem;
+        font-weight: 800;
+      }
+
+      .feature-callout p {
+        margin: 0.45rem 0 0;
+        color: var(--muted);
+      }
+
+      .feature-card,
+      .difference-card,
+      .limit-card {
+        padding: 1.2rem;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          background 180ms ease;
+      }
+
+      .feature-card:hover,
+      .difference-card:hover,
+      .limit-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(0, 113, 227, 0.42);
+        background: rgba(29, 29, 31, 0.92);
+      }
+
+      .card-number {
+        color: var(--accent);
+        font-size: 0.78rem;
+        font-weight: 850;
+      }
+
+      .difference-grid {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 1rem;
+      }
+
+      .difference-card.large {
+        min-height: 300px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 44%),
+          rgba(26, 26, 28, 0.78);
+      }
+
+      .timeline {
+        position: relative;
+        display: grid;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .timeline::before {
+        position: absolute;
+        left: 1.05rem;
+        top: 0.4rem;
+        bottom: 0.4rem;
+        width: 1px;
+        content: "";
+        background: linear-gradient(var(--accent), rgba(0, 113, 227, 0.18));
+      }
+
+      .timeline-item {
+        position: relative;
+        margin-left: 3rem;
+        padding: 1.1rem;
+      }
+
+      .timeline-item::before {
+        position: absolute;
+        left: -2.65rem;
+        top: 1.25rem;
+        width: 14px;
+        height: 14px;
+        content: "";
+        border: 3px solid var(--bg);
+        border-radius: 999px;
+        background: var(--accent);
+        box-shadow: 0 0 0 1px rgba(0, 113, 227, 0.56);
+      }
+
+      .timeline-date {
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 850;
+      }
+
+      .timeline-item h3 {
+        margin-top: 0.35rem;
+        font-size: 1.08rem;
+        font-weight: 800;
+      }
+
+      .planned {
+        display: inline-flex;
+        margin-left: 0.45rem;
+        border: 1px solid rgba(245, 245, 247, 0.24);
+        border-radius: 999px;
+        color: var(--muted);
+        padding: 0.14rem 0.42rem;
+        font-size: 0.68rem;
+        font-weight: 800;
+        vertical-align: middle;
+      }
+
+      .limits-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .team-card {
+        display: block;
+        overflow: hidden;
+        padding: 0.75rem;
+        color: inherit;
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          background 180ms ease;
+      }
+
+      .team-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(0, 113, 227, 0.42);
+        background: rgba(29, 29, 31, 0.92);
+      }
+
+      .team-photo {
+        position: relative;
+        display: grid;
+        aspect-ratio: 1 / 1;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid rgba(245, 245, 247, 0.12);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(0, 113, 227, 0.08)),
+          #1a1a1c;
+      }
+
+      .team-photo img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        z-index: 1;
+      }
+
+      .team-photo img.photo-aseel {
+        object-position: center 20%;
+      }
+
+      .initial-avatar {
+        display: grid;
+        position: relative;
+        width: 72px;
+        height: 72px;
+        place-items: center;
+        border: 1px solid rgba(0, 113, 227, 0.36);
+        border-radius: 8px;
+        color: var(--accent);
+        font-size: 1.5rem;
+        font-weight: 850;
+        z-index: 0;
+      }
+
+      .team-card h3 {
+        margin: 1rem 0 0.25rem;
+        font-size: 1rem;
+        font-weight: 800;
+      }
+
+      .team-role {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .marquee-section {
+        background: #000000;
+        padding: 0 0 clamp(3.4rem, 6vw, 5.6rem);
+        overflow: hidden;
+      }
+
+      .marquee-viewport {
+        position: relative;
+        width: min(1500px, calc(100% - 64px));
+        margin-inline: auto;
+        border-top: 1px solid rgba(245, 245, 247, 0.09);
+        border-bottom: 1px solid rgba(245, 245, 247, 0.09);
+        padding: 1.55rem 0;
+        overflow: hidden;
+      }
+
+      .marquee-viewport::before,
+      .marquee-viewport::after {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: 2;
+        width: min(16vw, 180px);
+        content: "";
+        pointer-events: none;
+      }
+
+      .marquee-viewport::before {
+        left: 0;
+        background: linear-gradient(90deg, #000000, transparent);
+      }
+
+      .marquee-viewport::after {
+        right: 0;
+        background: linear-gradient(270deg, #000000, transparent);
+      }
+
+      .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee-loop 24s linear infinite;
+        will-change: transform;
+      }
+
+      .marquee-section:hover .marquee-track {
+        animation-play-state: paused;
+      }
+
+      .marquee-group {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: clamp(3.1rem, 6vw, 6.8rem);
+        padding-right: clamp(3.1rem, 6vw, 6.8rem);
+      }
+
+      .marquee-item {
+        display: inline-flex;
+        height: 36px;
+        align-items: center;
+        gap: 0.68rem;
+        color: rgba(245, 245, 247, 0.74);
+        white-space: nowrap;
+      }
+
+      .marquee-logo {
+        display: block;
+        width: 32px;
+        height: 32px;
+        color: currentColor;
+        opacity: 0.92;
+      }
+
+      .marquee-wordmark {
+        font-size: clamp(1.05rem, 1.7vw, 1.42rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+
+      .marquee-planned {
+        color: var(--muted-2);
+        font-size: 0.78rem;
+        font-weight: 650;
+      }
+
+      .site-footer {
+        border-top: 1px solid rgba(245, 245, 247, 0.1);
+        padding: 1.6rem 0 1.9rem;
+        color: var(--muted);
+      }
+
+      .footer-inner {
+        display: grid;
+        grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+        gap: clamp(1.5rem, 5vw, 4rem);
+        align-items: center;
+      }
+
+      .footer-bottom {
+        display: flex;
+        justify-content: flex-end;
+        gap: clamp(1rem, 4vw, 3rem);
+        margin: 0;
+        color: var(--muted-2);
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+
+      .footer-bottom p {
+        max-width: 480px;
+        margin: 0;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .text-accent {
+        color: var(--accent);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .js .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 520ms ease,
+          transform 520ms ease;
+      }
+
+      .js .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @keyframes pipeline-sweep {
+        0% {
+          transform: translate(-20%, -50%);
+          opacity: 0;
+        }
+
+        16%,
+        72% {
+          opacity: 1;
+        }
+
+        100% {
+          transform: translate(400%, -50%);
+          opacity: 0;
+        }
+      }
+
+      @keyframes hero-copy-enter {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.985);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes camera-bob {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+
+        35% {
+          transform: translateY(-5px) rotate(-4deg);
+        }
+
+        70% {
+          transform: translateY(1px) rotate(3deg);
+        }
+      }
+
+      @keyframes hero-shimmer-drift {
+        from {
+          opacity: 0.42;
+          transform: translate3d(-8%, 0, 0);
+        }
+
+        to {
+          opacity: 0.76;
+          transform: translate3d(8%, -3%, 0);
+        }
+      }
+
+      @keyframes hero-panel-enter {
+        from {
+          opacity: 0;
+          transform: perspective(1200px) rotateY(-8deg) rotateX(2deg) translateY(18px) scale(0.985);
+        }
+
+        to {
+          opacity: 1;
+          transform: perspective(1200px) rotateY(-8deg) rotateX(2deg) translateY(0) scale(1);
+        }
+      }
+
+      @keyframes skeleton-idle {
+        0%,
+        100% {
+          transform: translateY(0) scaleY(1);
+          opacity: 0.78;
+        }
+
+        50% {
+          transform: translateY(-4px) scaleY(1.025);
+          opacity: 0.92;
+        }
+      }
+
+      @keyframes detection-pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 rgba(255, 59, 48, 0);
+          opacity: 0.88;
+        }
+
+        50% {
+          box-shadow: 0 0 24px rgba(255, 59, 48, 0.42);
+          opacity: 1;
+        }
+      }
+
+      @keyframes status-enter {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes marquee-loop {
+        from {
+          transform: translateX(0);
+        }
+
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .site-header {
+          top: 0;
+          left: 0;
+          width: 100%;
+          max-width: none;
+          overflow: visible;
+          border-width: 0 0 1px;
+          border-radius: 0;
+          background: rgba(0, 0, 0, 0.9);
+          transform: none;
+        }
+
+        .site-header::before {
+          display: none;
+        }
+
+        .header-inner {
+          min-height: 76px;
+          padding: 0 1.25rem;
+        }
+
+        .menu-toggle {
+          display: grid;
+          order: 0;
+        }
+
+        .brand {
+          order: 2;
+          width: 156px;
+          justify-content: flex-start;
+        }
+
+        .brand-badge {
+          width: 36px;
+          height: 36px;
+          border-radius: 10px;
+        }
+
+        .brand-name {
+          font-size: 0.88rem;
+        }
+
+        .brand-desc {
+          font-size: 0.58rem;
+          white-space: nowrap;
+        }
+
+        .nav-links {
+          position: fixed;
+          top: 86px;
+          right: 1rem;
+          left: 1rem;
+          display: grid;
+          gap: 0.25rem;
+          border: 1px solid rgba(245, 245, 247, 0.12);
+          border-radius: 18px;
+          background: rgba(0, 0, 0, 0.94);
+          box-shadow: 0 22px 60px rgba(0, 0, 0, 0.46);
+          padding: 0.7rem;
+          opacity: 0;
+          pointer-events: none;
+          transform: translateY(-8px);
+          transition:
+            opacity 180ms ease,
+            transform 180ms ease;
+        }
+
+        .site-header.menu-open .nav-links {
+          opacity: 1;
+          pointer-events: auto;
+          transform: translateY(0);
+        }
+
+        .nav-links a {
+          border-radius: 12px;
+          padding: 0.88rem 1rem;
+        }
+
+        .nav-links a:last-child {
+          border-color: transparent;
+          background: transparent;
+          box-shadow: none;
+        }
+
+        .nav-links a:last-child::before,
+        .nav-links a:last-child::after {
+          display: none;
+        }
+
+        .camera-frame {
+          right: -180px;
+          top: 150px;
+          min-width: 560px;
+          opacity: 0.48;
+          transform: none;
+        }
+
+        .section-head,
+        .problem-grid,
+        .difference-grid,
+        .dataset-callout {
+          grid-template-columns: 1fr;
+        }
+
+        .pipeline-flow,
+        .metrics-grid,
+        .cards-grid,
+        .limits-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .team-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .metric-card.featured {
+          grid-column: span 2;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .container-shell {
+          width: min(100% - 24px, 1160px);
+        }
+
+        .hero,
+        .hero-copy {
+          min-height: 79dvh;
+        }
+
+        .hero-copy {
+          padding-block: 6.8rem 3.8rem;
+        }
+
+        .camera-frame {
+          right: -270px;
+          top: 110px;
+          min-width: 560px;
+          opacity: 0.34;
+        }
+
+        h1 {
+          font-size: clamp(2.8rem, 14vw, 4.5rem);
+        }
+
+        .hero-title {
+          gap: 0.85rem;
+        }
+
+        .hero-hello {
+          font-size: clamp(3rem, 15vw, 4.15rem);
+        }
+
+        .hero-statement {
+          max-width: 100%;
+          font-size: clamp(2.35rem, 11.6vw, 3.35rem);
+          letter-spacing: -0.026em;
+          line-height: 1.12;
+        }
+
+        .hero-actions {
+          align-items: center;
+          flex-direction: row;
+        }
+
+        .button {
+          width: 100%;
+        }
+
+        .hero .button.primary {
+          width: auto;
+          min-width: 258px;
+          min-height: 66px;
+          padding-inline: 2rem;
+          font-size: 1.05rem;
+        }
+
+        .marquee-section {
+          padding-bottom: 3.4rem;
+        }
+
+        .marquee-viewport {
+          width: min(100% - 44px, 1160px);
+          padding: 1.25rem 0;
+        }
+
+        .marquee-group {
+          gap: 3.2rem;
+          padding-right: 3.2rem;
+        }
+
+        .marquee-logo {
+          width: 28px;
+          height: 28px;
+        }
+
+        .marquee-wordmark {
+          font-size: 1.3rem;
+        }
+
+        .pipeline-flow,
+        .metrics-grid,
+        .cards-grid,
+        .limits-grid,
+        .team-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .pipeline-flow::before {
+          left: 1.25rem;
+          right: auto;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          height: auto;
+          transform: none;
+        }
+
+        .pipeline-flow::after {
+          display: none;
+        }
+
+        .pipeline-node {
+          min-height: auto;
+        }
+
+        .metric-card.featured {
+          grid-column: span 1;
+        }
+
+        .footer-inner {
+          grid-template-columns: 1fr;
+          gap: 1.2rem;
+        }
+
+        .footer-logo {
+          width: min(180px, 58vw);
+        }
+
+        .footer-bottom {
+          flex-direction: column;
+          gap: 0.8rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+
+        .js .reveal {
+          opacity: 1;
+          transform: none;
+        }
+
+        .camera-frame {
+          opacity: 1;
+          transform: perspective(1200px) rotateY(-8deg) rotateX(2deg);
+        }
+
+        .skeleton,
+        .weapon-box,
+        .evidence-item,
+        .hero-camera,
+        .hero-copy-inner,
+        .hero-grid,
+        .hero-shimmer,
+        .marquee-track {
+          animation: none !important;
+          opacity: 1;
+          transform: none;
+        }
+
+        .js .pipeline-flow::before,
+        .js .pipeline-flow.is-visible::before {
+          transform: translateY(-50%) scaleX(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <header class="site-header" aria-label="Primary navigation">
+      <div class="container-shell header-inner">
+        <a class="brand" href="#top" aria-label="HARIS home">
+          <span class="brand-badge" aria-hidden="true">H</span>
+          <span class="brand-copy">
+            <span class="brand-name">HARIS</span>
+            <span class="brand-desc">Surveillance AI</span>
+          </span>
+        </a>
+        <button class="menu-toggle" type="button" aria-controls="primary-nav" aria-expanded="false" aria-label="Open menu">
+          <span aria-hidden="true"></span>
+        </button>
+        <nav id="primary-nav" class="nav-links" aria-label="Page sections">
+          <a href="#problem">Problem</a>
+          <a href="#pipeline">Pipeline</a>
+          <a href="#results">Results</a>
+          <a href="#features">Features</a>
+          <a href="#roadmap">Roadmap</a>
+          <a class="glow-orbit" href="https://www.linkedin.com/in/turki-alshuaibi/" target="_blank" rel="noopener" data-glow-button>
+            <span class="orbit-glow" data-orbit-glow aria-hidden="true"></span>
+            <span class="orbit-stroke" data-orbit-stroke aria-hidden="true"></span>
+            <span class="nav-label">Connect</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section id="top" class="hero hero-minimal" aria-labelledby="hero-title">
+        <div class="hero-scene" aria-hidden="true">
+          <div class="hero-grid"></div>
+          <div class="hero-shimmer"></div>
+        </div>
+        <div class="container-shell hero-copy">
+          <div class="hero-copy-inner reveal">
+            <h1 id="hero-title" class="hero-title">
+              <span class="hero-hello">HARIS <span class="hero-camera" aria-hidden="true">📸</span></span>
+              <span class="hero-statement">Hostile Activity Recognition and Intelligence System</span>
+            </h1>
+            <div class="hero-actions" aria-label="Primary link">
+              <a class="button primary glow-orbit" href="#pipeline" data-glow-button>
+                <span class="orbit-glow" data-orbit-glow aria-hidden="true"></span>
+                <span class="orbit-stroke" data-orbit-stroke aria-hidden="true"></span>
+                <span class="button-label">View Pipeline</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="problem" class="section-pad" aria-labelledby="problem-title">
+        <div class="container-shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">01 The problem we're solving</p>
+              <h2 id="problem-title" class="section-title">CCTV sees everything, operators cannot.</h2>
+            </div>
+            <p class="section-copy">
+              Most CCTV deployments are reactive. Hours of footage are reviewed only after an incident,
+              cameras do not talk to each other, and the few smart systems that exist flood operators
+              with false alarms or hide behind a single opaque score.
+            </p>
+          </div>
+          <div class="problem-grid">
+            <article class="panel problem-card large reveal">
+              <div>
+                <h3>Operator fatigue is the failure mode</h3>
+                <p>
+                  A security operator watching 16 camera feeds cannot physically pay attention to all of
+                  them. The moment that matters is usually the one nobody was watching.
+                </p>
+              </div>
+              <div class="operator-stat">
+                <strong>16</strong>
+                <span>simultaneous feeds can turn even a trained operator into a delayed forensic reviewer.</span>
+              </div>
+            </article>
+            <div class="stacked-cards">
+              <article class="panel problem-card reveal">
+                <h3>False-alarm flooding breaks trust</h3>
+                <p>
+                  Single detections are noisy in CCTV footage. A useful system must suppress weak signals,
+                  bind evidence over time, and show why an alert fired.
+                </p>
+              </article>
+              <article class="panel problem-card reveal">
+                <h3>Handshake versus strike needs time</h3>
+                <p>
+                  A single frame cannot reliably separate harmless contact from hostile motion. HARIS adds
+                  the temporal dimension through skeleton windows and tracked identities.
+                </p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pipeline" class="section-pad" aria-labelledby="pipeline-title">
+        <div class="container-shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">02 The pipeline</p>
+              <h2 id="pipeline-title" class="section-title">Four tiers, structured evidence.</h2>
+            </div>
+            <p class="section-copy">
+              The published CORE pipeline is a specialist chain. Each tier solves one sub-problem and
+              passes structured evidence to the next, so alerts can be audited instead of treated as
+              black-box scores.
+            </p>
+          </div>
+
+          <ol class="pipeline-flow reveal" aria-label="HARIS four-tier pipeline">
+            <li class="pipeline-node reveal">
+              <span class="tier">Tier 0</span>
+              <h3>Frame-difference motion gate</h3>
+              <p>Suppresses still frames and opens downstream inference only when motion evidence exists.</p>
+            </li>
+            <li class="pipeline-node reveal">
+              <span class="tier">Tier 1</span>
+              <h3>Dual RT-DETR detection</h3>
+              <p>Runs one fine-tuned weapon detector for gun and knife, plus one COCO-pretrained detector for people.</p>
+            </li>
+            <li class="pipeline-node reveal">
+              <span class="tier">Tier 2</span>
+              <h3>BoT-SORT and RTMPose-L</h3>
+              <p>Maintains person IDs and extracts 17-keypoint COCO skeletons for tracked people.</p>
+            </li>
+            <li class="pipeline-node reveal">
+              <span class="tier">Tier 3</span>
+              <h3>ST-GCN and Aggressor Logic Engine</h3>
+              <p>Classifies 30-frame skeleton windows and emits a JSON evidence chain for operator review.</p>
+            </li>
+          </ol>
+
+          <div class="table-wrap reveal">
+            <table>
+              <thead>
+                <tr>
+                  <th>Stage</th>
+                  <th>Component</th>
+                  <th>What it contributes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Motion</td>
+                  <td>Frame-difference gate</td>
+                  <td>Reduces wasted inference on still footage and makes the rest of the pipeline event-aware.</td>
+                </tr>
+                <tr>
+                  <td>Detect</td>
+                  <td>Dual RT-DETR</td>
+                  <td>Fine-tuned HARIS weapon detector for gun and knife, paired with COCO-pretrained person detection.</td>
+                </tr>
+                <tr>
+                  <td>Track and pose</td>
+                  <td>BoT-SORT plus RTMPose-L</td>
+                  <td>Stable person IDs across frames and 17 COCO keypoints per tracked person for skeleton reasoning.</td>
+                </tr>
+                <tr>
+                  <td>Action</td>
+                  <td>ST-GCN</td>
+                  <td>Skeleton-based action classification over 30-frame temporal windows instead of one-frame guesses.</td>
+                </tr>
+                <tr>
+                  <td>Reason</td>
+                  <td>Aggressor Logic Engine</td>
+                  <td>Combines detections, tracks, pose, temporal windows, and holder binding into a JSON evidence chain.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="results" class="section-pad" aria-labelledby="results-title">
+        <div class="container-shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">03 Measured results</p>
+              <h2 id="results-title" class="section-title">Paper numbers, not brochure numbers.</h2>
+            </div>
+            <p class="section-copy">
+              These figures follow the published paper. The runtime latency benchmark was measured on an
+              RTX 3070. Training was performed on an RTX 5070 Ti, and the two hardware contexts are kept
+              separate.
+            </p>
+          </div>
+
+          <div class="metrics-grid">
+            <article class="panel metric-card featured reveal">
+              <div>
+                <div class="metric-value count-up" data-target="74" data-prefix="-" data-suffix="%">-0%</div>
+                <p class="metric-label">per-frame weapon FP</p>
+              </div>
+              <p class="metric-note">
+                Per-frame weapon false positives were reduced from 8.49% to 0.75%. The paper reports a
+                74% relative reduction.
+              </p>
+            </article>
+            <article class="panel metric-card reveal">
+              <div>
+                <div class="metric-value count-up" data-target="67" data-suffix="%">0%</div>
+                <p class="metric-label">video-level FP reduction</p>
+              </div>
+              <p class="metric-note">2 of 25 benign videos were flagged, compared with 6 of 25 for the raw detector.</p>
+            </article>
+            <article class="panel metric-card reveal">
+              <div>
+                <div class="metric-value count-up" data-target="0.745" data-decimals="3">0.000</div>
+                <p class="metric-label">end-to-end F1</p>
+              </div>
+              <p class="metric-note">On in-scope UCF-Crime classes: Shooting, Assault, and Fighting. Precision 0.812, recall 0.688.</p>
+            </article>
+            <article class="panel metric-card reveal">
+              <div>
+                <div class="metric-value count-up" data-target="0.740" data-decimals="3">0.000</div>
+                <p class="metric-label">weapon mAP@50</p>
+              </div>
+              <p class="metric-note">Aggregate validation mAP@50, with gun 0.768, knife 0.711, precision 0.836, recall 0.690.</p>
+            </article>
+            <article class="panel metric-card reveal">
+              <div>
+                <div class="metric-value count-up" data-target="6102">0</div>
+                <p class="metric-label">curated images</p>
+              </div>
+              <p class="metric-note">Deduplicated images across 7 source datasets, with leak-audited GroupKFold splits.</p>
+            </article>
+            <article class="panel metric-card reveal">
+              <div>
+                <div class="metric-value count-up" data-target="98.9" data-decimals="1" data-suffix=" ms">0.0 ms</div>
+                <p class="metric-label">mean runtime latency</p>
+              </div>
+              <p class="metric-note">Measured on RTX 3070: 154.5 ms P95 and 10.1 FPS end-to-end throughput.</p>
+            </article>
+          </div>
+
+          <aside id="dataset" class="panel dataset-callout reveal" aria-labelledby="dataset-title">
+            <div>
+              <h3 id="dataset-title">Published HARIS weapon detection dataset</h3>
+              <p>
+                6,102 deduplicated images across 7 source datasets, released under CC BY 4.0 with a DOI
+                and leak-audited GroupKFold splits.
+              </p>
+            </div>
+            <div class="link-row" aria-label="Dataset links">
+              <a
+                class="mini-link"
+                href="https://www.kaggle.com/datasets/turkikhalidalshuaibi/haris-weapon-detection-dataset-curated"
+                target="_blank"
+                rel="noopener"
+              >Kaggle</a>
+              <a
+                class="mini-link"
+                href="https://huggingface.co/datasets/Turki-Alshuaibi/haris-weapon-detection-dataset-curated"
+                target="_blank"
+                rel="noopener"
+              >Hugging Face</a>
+              <p class="dataset-citation">DOI: 10.34740/kaggle/dsv/15861320, CC BY 4.0</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="features" class="section-pad" aria-labelledby="features-title">
+        <div class="container-shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">04 Operator-facing features</p>
+              <h2 id="features-title" class="section-title">Built like an operator surface.</h2>
+            </div>
+            <p class="section-copy">
+              The dashboard is designed as a professional DVR and NVR replacement, not a research
+              notebook. Every overlay is toggleable, every threshold is live-tunable, and every alert
+              shows its reasoning.
+            </p>
+          </div>
+
+          <div class="cards-grid">
+            <article class="panel feature-card reveal">
+              <span class="card-number">01</span>
+              <h3>Continuous body overlay</h3>
+              <p>
+                Skeleton and mannequin rendering for every tracked person. When pose estimation drops a
+                frame, a last-valid-pose snapshot holds briefly, then falls back to a generic body glow.
+              </p>
+            </article>
+            <article class="panel feature-card reveal">
+              <span class="card-number">02</span>
+              <h3>Weapon-threshold slider</h3>
+              <p>
+                Operators tune confidence sensitivity in real time, with live impact on detection panels,
+                overlay strokes, the auto-flagger, and the threat heatmap timeline.
+              </p>
+            </article>
+            <article class="panel feature-card reveal">
+              <span class="card-number">03</span>
+              <h3>Threat-density heatmap</h3>
+              <p>
+                The scrub bar renders detected threat density across the clip, so operators can scan a
+                long video quickly and jump to the seconds that matter.
+              </p>
+            </article>
+            <article class="panel feature-card reveal">
+              <span class="card-number">04</span>
+              <h3>Weapon holder binding</h3>
+              <p>
+                Detected weapons are bound to the wrist of the nearest tracked person through pose-based
+                proximity, making crowded-scene ownership easier to audit.
+              </p>
+            </article>
+            <article class="panel feature-card reveal">
+              <span class="card-number">05</span>
+              <h3>Night and tint modes</h3>
+              <p>
+                Per-clip brightness and contrast boosts for low-light footage, plus customizable tint for
+                washed-out daytime clips. Both persist per operator.
+              </p>
+            </article>
+            <article class="panel feature-card reveal">
+              <span class="card-number">06</span>
+              <h3>Auditable alerts</h3>
+              <p>
+                Every alert carries its evidence: frames, people, weapon class, confidence scores, and the
+                temporal window. Operators can acknowledge, mark false-positive, or escalate.
+              </p>
+            </article>
+          </div>
+          <aside class="panel feature-callout reveal" aria-label="Operator-gated FaceNet re-identification">
+            <span class="tier">Live feature</span>
+            <div>
+              <h3>Operator-gated FaceNet re-ID</h3>
+              <p>
+                FaceNet watchlist re-identification is available as an operator-enabled feature, gated by
+                policy and review rather than always-on surveillance.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="different" class="section-pad" aria-labelledby="different-title">
+        <div class="container-shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">05 What makes HARIS different</p>
+              <h2 id="different-title" class="section-title">Traceable by design.</h2>
+            </div>
+            <p class="section-copy">
+              HARIS is not a monolithic detector wrapped in a dashboard. The system keeps named model
+              boundaries and exposes the evidence chain to the operator.
+            </p>
+          </div>
+
+          <div class="difference-grid">
+            <article class="panel difference-card large reveal">
+              <span class="card-number">01</span>
+              <h3>Specialist pipeline, not monolith</h3>
+              <p>
+                Every decision is traceable to a named sub-model. When HARIS is wrong, we know which
+                stage was wrong and can fix that stage without retraining the whole system.
+              </p>
+            </article>
+            <div class="stacked-cards">
+              <article class="panel difference-card reveal">
+                <span class="card-number">02</span>
+                <h3>Temporal, not single-frame</h3>
+                <p>
+                  Actions are classified over 30-frame skeleton windows. Single-frame detections never
+                  carry the whole decision.
+                </p>
+              </article>
+              <article class="panel difference-card reveal">
+                <span class="card-number">03</span>
+                <h3>API-first, multi-client ready</h3>
+                <p>
+                  A clean JSON boundary means future mobile and desktop clients can plug into the same
+                  server for portable operator workflows.
+                </p>
+              </article>
+              <article class="panel difference-card reveal">
+                <span class="card-number">04</span>
+                <h3>Honest evaluation</h3>
+                <p>
+                  Group-aware splits, source-level deduplication, and published limitations keep the
+                  results anchored to what the system can actually do.
+                </p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="roadmap" class="section-pad" aria-labelledby="roadmap-title">
+        <div class="container-shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">06 Roadmap</p>
+              <h2 id="roadmap-title" class="section-title">Published core, planned extensions.</h2>
+            </div>
+            <p class="section-copy">
+              Qwen2.5-VL summaries remain planned, while FaceNet re-ID is treated as an
+              operator-gated live feature outside the published CORE pipeline.
+            </p>
+          </div>
+
+          <div class="timeline">
+            <article class="panel timeline-item reveal">
+              <div class="timeline-date">Semester 1 | 2025</div>
+              <h3>Foundations</h3>
+              <p>
+                Problem framing, literature review, initial dataset construction, first-pass detector and
+                pose integration. Proposal defense passed.
+              </p>
+            </article>
+            <article class="panel timeline-item reveal">
+              <div class="timeline-date">Semester 2 | Q1 2026</div>
+              <h3>Full published pipeline</h3>
+              <p>
+                Tier 0 motion gate, dual RT-DETR, BoT-SORT, RTMPose-L, ST-GCN, and Aggressor Logic Engine
+                running end-to-end with auditable JSON output.
+              </p>
+            </article>
+            <article class="panel timeline-item reveal">
+              <div class="timeline-date">April 2026</div>
+              <h3>Weapon detector v2 and evaluation</h3>
+              <p>
+                Fine-tuned detector, paper metrics, continuous body overlay, threshold controls, threat
+                heatmap, holder binding, and night or tint modes.
+              </p>
+            </article>
+            <article class="panel timeline-item reveal">
+              <div class="timeline-date">Planned</div>
+              <h3>Qwen2.5-VL on-alert summaries <span class="planned">planned</span></h3>
+              <p>
+                On-alert visual-language summaries that explain scene context in natural language after a
+                structured alert has already fired.
+              </p>
+            </article>
+            <article class="panel timeline-item reveal">
+              <div class="timeline-date">Planned</div>
+              <h3>Aggressor Logic Engine smoothing variant <span class="planned">planned</span></h3>
+              <p>
+                A temporal-smoothing variant that improves role assignment stability for aggressor,
+                defender, and bystander labels.
+              </p>
+            </article>
+            <article class="panel timeline-item reveal">
+              <div class="timeline-date">Planned</div>
+              <h3>Edge-device deployment <span class="planned">planned</span></h3>
+              <p>
+                Profiling and optimization for constrained deployment targets beyond the desktop GPU
+                environment used in the paper.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="limitations" class="section-pad" aria-labelledby="limitations-title">
+        <div class="container-shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">07 Honest limitations</p>
+              <h2 id="limitations-title" class="section-title">Operational caps are part of the product.</h2>
+            </div>
+            <p class="section-copy">
+              We publish the caps. A system that pretends to have no limits hides those limits from its
+              operators, which is the opposite of what surveillance AI should do.
+            </p>
+          </div>
+
+          <div class="limits-grid">
+            <article class="panel limit-card reveal">
+              <h3>Top-4 action labels</h3>
+              <p>
+                Tracking applies to everyone in frame, but skeleton-based action classification applies
+                to the four highest-detection-confidence persons.
+              </p>
+            </article>
+            <article class="panel limit-card reveal">
+              <h3>Video processing cap</h3>
+              <p>
+                The dashboard is scoped for short-clip operator workflows, with a 60-second, 10 FPS
+                default upload cap that can be overridden for evaluation runs.
+              </p>
+            </article>
+            <article class="panel limit-card reveal">
+              <h3>Gated re-ID</h3>
+              <p>
+                Tracker re-identification and watchlist matching are gated because the re-ID path has a
+                wall-time cost and privacy implications.
+              </p>
+            </article>
+            <article class="panel limit-card reveal">
+              <h3>Pose-confidence gating</h3>
+              <p>
+                Far-field subjects with low-quality skeletons can keep bounding boxes and tracks while
+                dropping action labels.
+              </p>
+            </article>
+            <article class="panel limit-card reveal">
+              <h3>Knife localization gap</h3>
+              <p>
+                Knife boxes are harder to localize at small scale and in occlusion, which can affect
+                holder binding and confidence.
+              </p>
+            </article>
+            <article class="panel limit-card reveal">
+              <h3>Long-range and low-resolution limits</h3>
+              <p>
+                Very small people, compressed footage, and poor camera angles still reduce detector,
+                pose, and action-classifier reliability.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="team" class="section-pad" aria-labelledby="team-title">
+        <div class="container-shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">08 Team</p>
+              <h2 id="team-title" class="section-title">Five students, one system.</h2>
+            </div>
+            <p class="section-copy">
+              College of Computer Science and Information Technology, Imam Abdulrahman Bin Faisal
+              University.
+            </p>
+          </div>
+
+          <div class="team-grid">
+            <a class="panel team-card reveal" href="https://www.linkedin.com/in/turki-alshuaibi/" target="_blank" rel="noopener" aria-label="Open profile for Turki Alshuaibi">
+              <div class="team-photo">
+                <img src="./assets/team/turki.jpeg" alt="Portrait of Turki Alshuaibi" loading="lazy" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');" />
+                <div class="initial-avatar" aria-hidden="true">T</div>
+              </div>
+              <h3>Turki Alshuaibi</h3>
+              <p class="team-role">Team Leader</p>
+            </a>
+            <a class="panel team-card reveal" href="https://www.linkedin.com/in/hamza-alzahrani-/" target="_blank" rel="noopener" aria-label="Open profile for Hamza Alzahrani">
+              <div class="team-photo">
+                <img src="./assets/team/hamza.jpeg" alt="Portrait of Hamza Alzahrani" loading="lazy" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');" />
+                <div class="initial-avatar" aria-hidden="true">H</div>
+              </div>
+              <h3>Hamza Alzahrani</h3>
+              <p class="team-role">Team Member</p>
+            </a>
+            <a class="panel team-card reveal" href="https://www.linkedin.com/in/aseel-alsaid/" target="_blank" rel="noopener" aria-label="Open profile for Aseel Alsaid">
+              <div class="team-photo">
+                <img class="photo-aseel" src="./assets/team/aseel.png" alt="Portrait of Aseel Alsaid" loading="lazy" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');" />
+                <div class="initial-avatar" aria-hidden="true">A</div>
+              </div>
+              <h3>Aseel Alsaid</h3>
+              <p class="team-role">Team Member</p>
+            </a>
+            <a class="panel team-card reveal" href="https://www.linkedin.com/in/anasghamdi/" target="_blank" rel="noopener" aria-label="Open profile for Anas Alghamdi">
+              <div class="team-photo">
+                <img src="./assets/team/anas.jpeg" alt="Portrait of Anas Alghamdi" loading="lazy" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');" />
+                <div class="initial-avatar" aria-hidden="true">A</div>
+              </div>
+              <h3>Anas Alghamdi</h3>
+              <p class="team-role">Team Member</p>
+            </a>
+            <a class="panel team-card reveal" href="https://www.linkedin.com/in/engineer-khalid-alomair/" target="_blank" rel="noopener" aria-label="Open profile for Khalid Alomair">
+              <div class="team-photo">
+                <img src="./assets/team/khalid.jpeg" alt="Portrait of Khalid Alomair" loading="lazy" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');" />
+                <div class="initial-avatar" aria-hidden="true">K</div>
+              </div>
+              <h3>Khalid Alomair</h3>
+              <p class="team-role">Team Member</p>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="marquee-section" aria-label="Technology stack">
+        <div class="marquee-viewport">
+          <div class="marquee-track">
+            <div class="marquee-group">
+              <span class="marquee-item"><span class="marquee-wordmark">RT-DETR</span></span>
+              <span class="marquee-item"><span class="marquee-wordmark">BoT-SORT</span></span>
+              <span class="marquee-item"><span class="marquee-wordmark">RTMPose</span></span>
+              <span class="marquee-item"><span class="marquee-wordmark">ST-GCN</span></span>
+              <span class="marquee-item"><span class="marquee-wordmark">FaceNet</span></span>
+              <span class="marquee-item">
+                <svg class="marquee-logo" viewBox="0 0 64 64" aria-hidden="true">
+                  <path fill="currentColor" d="M42.6 14.2 37.8 19a18.5 18.5 0 1 1-13.1 0l-4.8-4.8a25.2 25.2 0 1 0 22.7 0Z"/>
+                  <circle cx="42.6" cy="21.4" r="4.1" fill="currentColor"/>
+                </svg>
+                <span class="marquee-wordmark">PyTorch</span>
+              </span>
+            </div>
+            <div class="marquee-group" aria-hidden="true">
+              <span class="marquee-item"><span class="marquee-wordmark">RT-DETR</span></span>
+              <span class="marquee-item"><span class="marquee-wordmark">BoT-SORT</span></span>
+              <span class="marquee-item"><span class="marquee-wordmark">RTMPose</span></span>
+              <span class="marquee-item"><span class="marquee-wordmark">ST-GCN</span></span>
+              <span class="marquee-item"><span class="marquee-wordmark">FaceNet</span></span>
+              <span class="marquee-item">
+                <svg class="marquee-logo" viewBox="0 0 64 64" aria-hidden="true">
+                  <path fill="currentColor" d="M42.6 14.2 37.8 19a18.5 18.5 0 1 1-13.1 0l-4.8-4.8a25.2 25.2 0 1 0 22.7 0Z"/>
+                  <circle cx="42.6" cy="21.4" r="4.1" fill="currentColor"/>
+                </svg>
+                <span class="marquee-wordmark">PyTorch</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container-shell footer-inner">
+        <img class="footer-logo" src="./assets/haris-logo-light.png" alt="HARIS" loading="lazy" />
+        <div class="footer-bottom">
+          <p>
+            HARIS | Hostile Activity Recognition Intelligence System<br />
+            Graduation Project | 2025-2026 | College of Computer Science and IT | IAU, Saudi Arabia
+          </p>
+          <p>
+            Supervised by faculty at the College of Computer Science and Information Technology, Imam
+            Abdulrahman Bin Faisal University, Dammam, Kingdom of Saudi Arabia.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const siteHeader = document.querySelector(".site-header");
+      const menuToggle = document.querySelector(".menu-toggle");
+      const navLinks = document.querySelectorAll(".nav-links a");
+
+      const closeMenu = () => {
+        siteHeader?.classList.remove("menu-open");
+        menuToggle?.setAttribute("aria-expanded", "false");
+        menuToggle?.setAttribute("aria-label", "Open menu");
+      };
+
+      menuToggle?.addEventListener("click", () => {
+        const isOpen = siteHeader?.classList.toggle("menu-open") || false;
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+        menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+      });
+
+      navLinks.forEach((link) => {
+        link.addEventListener("click", closeMenu);
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeMenu();
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 1024) {
+          closeMenu();
+        }
+      });
+
+      const glowButtons = Array.from(document.querySelectorAll("[data-glow-button]"));
+      const glowPoint = (phase) => {
+        const angle = phase * Math.PI * 2 - Math.PI / 2;
+        return {
+          x: 50 + Math.cos(angle) * 48,
+          y: 50 + Math.sin(angle) * 48,
+        };
+      };
+
+      const paintGlow = (button, x, y) => {
+        const safeX = x.toFixed(3);
+        const safeY = y.toFixed(3);
+        const glow = button.querySelector("[data-orbit-glow]");
+        const stroke = button.querySelector("[data-orbit-stroke]");
+        button.style.setProperty("--glow-x", `${safeX}%`);
+        button.style.setProperty("--glow-y", `${safeY}%`);
+        if (glow) {
+          glow.style.background = `radial-gradient(18% 30% at ${safeX}% ${safeY}%, rgba(var(--orbit-rgb), var(--orbit-glow-alpha)) 0%, rgba(var(--orbit-rgb), var(--orbit-glow-soft-alpha)) 34%, rgba(var(--orbit-rgb), 0) 76%)`;
+        }
+        if (stroke) {
+          stroke.style.background = `radial-gradient(20% 32% at ${safeX}% ${safeY}%, rgba(var(--orbit-rgb), var(--orbit-stroke-alpha)) 0%, rgba(var(--orbit-rgb), var(--orbit-stroke-soft-alpha)) 28%, rgba(var(--orbit-rgb), 0) 72%)`;
+        }
+      };
+
+      const orbitMotionSetting = new URLSearchParams(window.location.search).get("motion");
+      const orbitMotionOff = orbitMotionSetting === "off";
+      const orbitMotionForced = orbitMotionSetting === "on";
+      if (orbitMotionOff) {
+        glowButtons.forEach((button) => paintGlow(button, 72, 18));
+      } else {
+        const orbitDuration = prefersReducedMotion && !orbitMotionForced ? 6400 : 3200;
+        const moveGlow = (time) => {
+          glowButtons.forEach((button, index) => {
+            const phase = ((time / orbitDuration) + index * 0.16) % 1;
+            const point = glowPoint(phase);
+            paintGlow(button, point.x, point.y);
+          });
+          requestAnimationFrame(moveGlow);
+        };
+        requestAnimationFrame(moveGlow);
+      }
+
+      const revealElements = document.querySelectorAll(".reveal");
+      if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+        revealElements.forEach((element) => element.classList.add("is-visible"));
+      } else {
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                revealObserver.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.16 }
+        );
+        revealElements.forEach((element) => revealObserver.observe(element));
+      }
+
+      const formatNumber = (value, decimals) => {
+        if (decimals > 0) {
+          return value.toFixed(decimals);
+        }
+        return Math.round(value).toLocaleString("en-US");
+      };
+
+      const animateCount = (element) => {
+        const target = Number(element.dataset.target || "0");
+        const decimals = Number(element.dataset.decimals || "0");
+        const prefix = element.dataset.prefix || "";
+        const suffix = element.dataset.suffix || "";
+        const duration = prefersReducedMotion ? 0 : 1100;
+        const startTime = performance.now();
+
+        const render = (now) => {
+          const progress = duration === 0 ? 1 : Math.min((now - startTime) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const value = target * eased;
+          element.textContent = `${prefix}${formatNumber(value, decimals)}${suffix}`;
+          if (progress < 1) {
+            requestAnimationFrame(render);
+          }
+        };
+
+        requestAnimationFrame(render);
+      };
+
+      const countElements = document.querySelectorAll(".count-up");
+      const startCounts = () => {
+        countElements.forEach((element) => {
+          if (element.dataset.counted === "true") {
+            return;
+          }
+          element.dataset.counted = "true";
+          animateCount(element);
+        });
+      };
+
+      if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+        startCounts();
+      } else {
+        const resultsSection = document.querySelector("#results");
+        const countObserver = new IntersectionObserver(
+          (entries) => {
+            if (entries.some((entry) => entry.isIntersecting)) {
+              startCounts();
+              countObserver.disconnect();
+            }
+          },
+          { rootMargin: "0px 0px -12% 0px", threshold: 0.12 }
+        );
+        countObserver.observe(resultsSection || document.body);
+      }
+    </script>
+  </body>
+</html>

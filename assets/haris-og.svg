@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">HARIS project preview</title>
+  <desc id="desc">Dark preview card for the HARIS Hostile Activity Recognition Intelligence System site.</desc>
+  <rect width="1200" height="630" fill="#0A0A0A"/>
+  <path d="M0 0h1200v630H0z" fill="url(#bg)"/>
+  <g opacity="0.18">
+    <path d="M0 114h1200M0 228h1200M0 342h1200M0 456h1200M0 570h1200M120 0v630M240 0v630M360 0v630M480 0v630M600 0v630M720 0v630M840 0v630M960 0v630M1080 0v630" stroke="#97A4B7"/>
+  </g>
+  <rect x="72" y="78" width="1056" height="474" rx="18" fill="#1A1A1C" stroke="#333336"/>
+  <text x="104" y="170" fill="#0071E3" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800">HARIS</text>
+  <text x="104" y="258" fill="#F4F7FB" font-family="Inter, Arial, sans-serif" font-size="70" font-weight="800">Real-time hostile activity</text>
+  <text x="104" y="340" fill="#F4F7FB" font-family="Inter, Arial, sans-serif" font-size="70" font-weight="800">recognition for CCTV</text>
+  <text x="106" y="416" fill="#A7B2C2" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="500">Four-tier auditable pipeline for operator-facing alerts.</text>
+  <g transform="translate(750 158)">
+    <rect x="0" y="0" width="300" height="240" rx="12" fill="#000000" stroke="#333336" opacity="0.95"/>
+    <rect x="48" y="56" width="88" height="142" rx="5" fill="none" stroke="#F5F5F7" stroke-width="3"/>
+    <rect x="178" y="78" width="62" height="104" rx="5" fill="none" stroke="#0071E3" stroke-width="3"/>
+    <rect x="120" y="106" width="78" height="26" rx="5" fill="none" stroke="#FF3B30" stroke-width="3"/>
+    <path d="M92 72l-4 50-18 54M88 122l44 46M88 122l-34 42M88 122l16 64M88 122l-12 66" stroke="#F5F5F7" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="94" cy="54" r="13" fill="#F5F5F7"/>
+  </g>
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(250 120) rotate(35) scale(720 480)">
+      <stop stop-color="#242426"/>
+      <stop offset="0.48" stop-color="#111111"/>
+      <stop offset="1" stop-color="#000000"/>
+    </radialGradient>
+  </defs>
+</svg>
