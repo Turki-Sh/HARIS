@@ -2363,6 +2363,55 @@
           .coverflow-card:fullscreen .cf-controls {
             opacity: 1;
           }
+
+          /* Mobile Nav Indicators */
+          .mobile-dots {
+            display: none;
+          }
+
+          /* Responsive Mobile Layout */
+          @media (max-width: 768px) {
+            .coverflow-wrapper {
+              flex-direction: column;
+              height: auto;
+              min-height: 0;
+              perspective: none;
+              padding: 0 1rem;
+            }
+            .coverflow-card {
+              position: static;
+              width: 100%;
+              max-width: 100%;
+              aspect-ratio: 16/9;
+              transform: none !important;
+              filter: none !important;
+              display: none;
+              margin-bottom: 1rem;
+            }
+            .coverflow-card.card-center {
+              display: block;
+              box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            }
+            .mobile-dots {
+              display: flex;
+              gap: 0.5rem;
+              justify-content: center;
+              width: 100%;
+              padding: 1rem 0;
+            }
+            .dot {
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              background: var(--muted-2);
+              cursor: pointer;
+              transition: background 0.3s, transform 0.3s;
+            }
+            .dot.active {
+              background: var(--accent);
+              transform: scale(1.2);
+            }
+          }
         </style>
 
         <div class="container-shell">
@@ -2378,6 +2427,7 @@
         </div>
 
         <div class="coverflow-wrapper" id="cf-wrapper"></div>
+        <div class="mobile-dots" id="mobile-dots"></div>
 
         <script>
           (function() {
@@ -2393,13 +2443,13 @@
             ];
 
             const wrapper = document.getElementById('cf-wrapper');
+            const dotsWrapper = document.getElementById('mobile-dots');
             let currentIndex = 2;
             let cycleInterval = null;
             let isLocked = false;
             const cards = [];
+            const dots = [];
 
-            const volIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`;
-            const muteIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
             const fsIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
             const exitFsIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>`;
 
@@ -2420,30 +2470,31 @@
               const controls = document.createElement('div');
               controls.className = 'cf-controls';
               
-              const muteBtn = document.createElement('button');
-              muteBtn.className = 'cf-btn';
-              muteBtn.innerHTML = muteIcon;
-              muteBtn.setAttribute('aria-label', 'Unmute');
-              
               const fsBtn = document.createElement('button');
               fsBtn.className = 'cf-btn';
               fsBtn.innerHTML = fsIcon;
               fsBtn.setAttribute('aria-label', 'Fullscreen');
               
-              controls.appendChild(muteBtn);
               controls.appendChild(fsBtn);
               
               card.appendChild(video);
               card.appendChild(controls);
               wrapper.appendChild(card);
-              cards.push({ card, video, muteBtn, fsBtn });
+              cards.push({ card, video, fsBtn });
 
-              muteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                video.muted = !video.muted;
-                muteBtn.innerHTML = video.muted ? muteIcon : volIcon;
-                muteBtn.setAttribute('aria-label', video.muted ? 'Unmute' : 'Mute');
-              });
+              // Only create 5 dots since 6th is always the hidden duplicate
+              if (i < 5) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                dot.setAttribute('aria-label', 'Show ' + clip.label);
+                dotsWrapper.appendChild(dot);
+                dots.push(dot);
+
+                dot.addEventListener('click', (e) => {
+                  e.stopPropagation();
+                  lockAndFocus(i);
+                });
+              }
 
               fsBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -2459,19 +2510,16 @@
                 fsBtn.setAttribute('aria-label', document.fullscreenElement ? 'Exit Fullscreen' : 'Fullscreen');
               });
 
-              const lockAndFocus = () => {
+              const lockAndFocus = (targetIndex = i) => {
                 if (!isLocked) {
                   isLocked = true;
                   clearInterval(cycleInterval);
-                  video.muted = false;
-                  muteBtn.innerHTML = volIcon;
-                  muteBtn.setAttribute('aria-label', 'Mute');
                 }
-                currentIndex = i;
+                currentIndex = targetIndex;
                 updatePositions();
               };
 
-              card.addEventListener('click', lockAndFocus);
+              card.addEventListener('click', () => lockAndFocus());
               card.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
@@ -2516,6 +2564,19 @@
                     item.card.style.pointerEvents = 'none';
                     item.video.pause();
                   }
+                }
+              });
+
+              // Update mobile dots (mapped strictly to the first 5 visual items)
+              dots.forEach((dot, i) => {
+                let actualFocus = currentIndex;
+                // If the hidden 6th slot (index 5) is active, map its dot to index 0 visually
+                if (actualFocus === 5) actualFocus = 0;
+                
+                if (i === actualFocus) {
+                  dot.classList.add('active');
+                } else {
+                  dot.classList.remove('active');
                 }
               });
             }
