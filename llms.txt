@@ -1,6 +1,6 @@
 # HARIS
 
-> HARIS, Hostile Activity Recognition and Intelligence System, is a university-built computer vision project for hostile activity recognition in CCTV footage.
+> HARIS, Hostile Activity Recognition and Intelligence System, is a computer vision project for hostile activity recognition in CCTV footage.
 
 Canonical URL: https://turki-sh.github.io/HARIS/
 

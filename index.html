@@ -6,7 +6,7 @@
     <title>HARIS | Hostile Activity Recognition and Intelligence System</title>
     <meta
       name="description"
-      content="HARIS is a university graduation project from IAU that recognizes hostile activity in CCTV footage with a four-tier, auditable computer vision pipeline."
+      content="HARIS is a system that recognizes hostile activity in CCTV footage with a four-tier, auditable computer vision pipeline."
     />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="application-name" content="HARIS" />
@@ -20,8 +20,8 @@
     <meta property="og:url" content="https://turki-sh.github.io/HARIS/" />
     <meta property="og:site_name" content="HARIS" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content="https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=132" />
-    <meta property="og:image:secure_url" content="https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=132" />
+    <meta property="og:image" content="https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=133" />
+    <meta property="og:image:secure_url" content="https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=133" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -32,18 +32,18 @@
       name="twitter:description"
       content="A dark, product-grade overview of HARIS, an auditable CCTV hostile activity recognition pipeline built for operators."
     />
-    <meta name="twitter:image" content="https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=132" />
+    <meta name="twitter:image" content="https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=133" />
     <meta name="twitter:image:alt" content="HARIS social preview card showing the four-tier hostile activity recognition pipeline." />
     <meta name="twitter:domain" content="turki-sh.github.io" />
     <meta name="twitter:url" content="https://turki-sh.github.io/HARIS/" />
     <meta itemprop="name" content="HARIS | Hostile Activity Recognition and Intelligence System" />
     <meta
       itemprop="description"
-      content="HARIS is a university graduation project from IAU that recognizes hostile activity in CCTV footage with a four-tier, auditable computer vision pipeline."
+      content="HARIS is a system that recognizes hostile activity in CCTV footage with a four-tier, auditable computer vision pipeline."
     />
-    <meta itemprop="image" content="https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=132" />
+    <meta itemprop="image" content="https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=133" />
     <link rel="canonical" href="https://turki-sh.github.io/HARIS/" />
-    <link rel="image_src" href="https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=132" />
+    <link rel="image_src" href="https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=133" />
     <link rel="sitemap" type="application/xml" href="./sitemap.xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -51,11 +51,11 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" href="./favicon.ico?v=3" sizes="any" />
-    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg?v=3" />
-    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png?v=3" />
-    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png?v=3" />
-    <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png?v=3" />
+    <link rel="icon" href="./favicon.ico?v=4" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg?v=4" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png?v=4" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png?v=4" />
+    <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png?v=4" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -63,12 +63,8 @@
         "name": "HARIS",
         "alternateName": "Hostile Activity Recognition and Intelligence System",
         "url": "https://turki-sh.github.io/HARIS/",
-        "description": "HARIS is a university graduation project from IAU that recognizes hostile activity in CCTV footage with a four-tier, auditable computer vision pipeline.",
-        "image": "https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=132",
-        "publisher": {
-          "@type": "CollegeOrUniversity",
-          "name": "Imam Abdulrahman Bin Faisal University"
-        }
+        "description": "HARIS is a system that recognizes hostile activity in CCTV footage with a four-tier, auditable computer vision pipeline.",
+        "image": "https://turki-sh.github.io/HARIS/assets/haris-social-card.png?v=133"
       }
     </script>
     <script>
@@ -1555,31 +1551,151 @@
       }
 
       .site-footer {
-        border-top: 1px solid rgba(245, 245, 247, 0.1);
-        padding: 1.6rem 0 1.9rem;
-        color: var(--muted);
+        position: relative;
+        overflow: hidden;
+        padding: 1rem 0 0;
+        z-index: 1;
       }
 
-      .footer-inner {
-        display: grid;
-        grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
-        gap: clamp(1.5rem, 5vw, 4rem);
+      .footer-bg-text {
+        position: absolute;
+        bottom: -3vw;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: inherit;
+        font-size: 32vw;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.04);
+        line-height: 0.75;
+        pointer-events: none;
+        z-index: -1;
+        user-select: none;
+        white-space: nowrap;
+      }
+
+      .footer-card {
+        background: #111111;
+        border: 1px solid rgba(245, 245, 247, 0.1);
+        border-radius: 24px;
+        padding: 3rem 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+        width: min(1500px, calc(100% - 48px));
+        margin: 0 auto 10rem;
+      }
+
+      .footer-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 4rem;
+        flex-wrap: wrap;
+      }
+
+      .footer-info {
+        max-width: 380px;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .footer-brand-new {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+
+      .footer-logo-new {
+        height: 20px;
+        width: auto;
+      }
+
+      .footer-desc {
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      .footer-socials {
+        display: flex;
+        gap: 1.2rem;
+      }
+
+      .footer-socials a {
+        color: var(--text);
+        opacity: 0.7;
+        transition: opacity 180ms ease, color 180ms ease;
+        display: flex;
         align-items: center;
       }
 
-      .footer-bottom {
-        display: flex;
-        justify-content: flex-end;
-        gap: clamp(1rem, 4vw, 3rem);
-        margin: 0;
-        color: var(--muted-2);
-        font-size: 0.86rem;
-        line-height: 1.55;
+      .footer-socials a:hover {
+        opacity: 1;
+        color: var(--accent);
       }
 
-      .footer-bottom p {
-        max-width: 480px;
+      .footer-links-group {
+        display: flex;
+        gap: 6rem;
+      }
+
+      .footer-column {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+      }
+
+      .footer-column h4 {
+        color: var(--text);
+        font-size: 0.95rem;
+        font-weight: 600;
         margin: 0;
+      }
+
+      .footer-column ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .footer-column a {
+        color: var(--muted);
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: color 180ms ease;
+      }
+
+      .footer-column a:hover {
+        color: var(--text);
+      }
+
+      .footer-divider {
+        height: 1px;
+        background: rgba(245, 245, 247, 0.1);
+        width: 100%;
+      }
+
+      .footer-bottom-new {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .footer-bottom-new p {
+        color: var(--muted);
+        font-size: 0.82rem;
+        margin: 0;
+      }
+
+      .footer-bottom-links {
+        display: flex;
+        gap: 1.5rem;
       }
 
       .muted {
@@ -1960,18 +2076,19 @@
           grid-column: span 1;
         }
 
-        .footer-inner {
-          grid-template-columns: 1fr;
-          gap: 1.2rem;
+        .footer-card {
+          padding: 2rem;
+          gap: 2rem;
         }
 
-        .footer-logo {
-          width: min(180px, 58vw);
-        }
-
-        .footer-bottom {
+        .footer-top {
           flex-direction: column;
-          gap: 0.8rem;
+          gap: 2.5rem;
+        }
+
+        .footer-links-group {
+          gap: 3rem;
+          flex-wrap: wrap;
         }
       }
 
@@ -2451,7 +2568,7 @@
 
           <div class="timeline">
             <article class="panel timeline-item reveal">
-              <div class="timeline-date">Semester 1 | 2025</div>
+              <div class="timeline-date">Phase 1 | 2025</div>
               <h3>Foundations</h3>
               <p>
                 Problem framing, literature review, initial dataset construction, first-pass detector and
@@ -2459,7 +2576,7 @@
               </p>
             </article>
             <article class="panel timeline-item reveal">
-              <div class="timeline-date">Semester 2 | Q1 2026</div>
+              <div class="timeline-date">Phase 2 | Q1 2026</div>
               <h3>Full published pipeline</h3>
               <p>
                 Tier 0 motion gate, dual RT-DETR, BoT-SORT, RTMPose-L, ST-GCN, and Aggressor Logic Engine
@@ -2567,12 +2684,8 @@
           <div class="section-head reveal">
             <div>
               <p class="section-kicker">08 Team</p>
-              <h2 id="team-title" class="section-title">Five students, one system.</h2>
+              <h2 id="team-title" class="section-title">Five developers, one system.</h2>
             </div>
-            <p class="section-copy">
-              College of Computer Science and Information Technology, Imam Abdulrahman Bin Faisal
-              University.
-            </p>
           </div>
 
           <div class="team-grid">
@@ -2681,20 +2794,51 @@
     </main>
 
     <footer class="site-footer">
-      <div class="container-shell footer-inner">
-        <div class="footer-brand">
-          <img class="footer-logo" src="./assets/haris-logo-light.png" alt="HARIS" loading="lazy" />
-          <span class="version-pill">v1.3.2</span>
+      <div class="footer-bg-text" aria-hidden="true">HARIS</div>
+      <div class="footer-card">
+        <div class="footer-top">
+          <div class="footer-info">
+            <div class="footer-brand-new">
+              <span class="footer-logo-text" style="font-weight: 700; font-size: 1.25rem; color: #fff; letter-spacing: 0.02em;">HARIS</span>
+              <span class="version-pill">v1.3.2</span>
+            </div>
+            <p class="footer-desc">
+              HARIS is a system that recognizes hostile activity in CCTV footage with a four-tier, auditable computer vision pipeline.
+            </p>
+            <div class="footer-socials">
+              <a href="https://github.com/Turki-Sh/HARIS" target="_blank" rel="noopener" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.285 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+              <a href="https://www.linkedin.com/in/turki-alshuaibi/" target="_blank" rel="noopener" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              </a>
+            </div>
+          </div>
+          <div class="footer-links-group">
+            <div class="footer-column">
+              <h4>System</h4>
+              <ul>
+                <li><a href="#problem">Problem</a></li>
+                <li><a href="#pipeline">Pipeline</a></li>
+                <li><a href="#features">Features</a></li>
+              </ul>
+            </div>
+            <div class="footer-column">
+              <h4>Project</h4>
+              <ul>
+                <li><a href="#roadmap">Roadmap</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#team">Team</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="footer-bottom">
-          <p>
-            HARIS | Hostile Activity Recognition Intelligence System<br />
-            Graduation Project | 2025-2026 | College of Computer Science and IT | IAU, Saudi Arabia
-          </p>
-          <p>
-            Supervised by faculty at the College of Computer Science and Information Technology, Imam
-            Abdulrahman Bin Faisal University, Dammam, Kingdom of Saudi Arabia.
-          </p>
+        <div class="footer-divider"></div>
+        <div class="footer-bottom-new">
+          <p>© 2026 HARIS. All rights reserved.</p>
+          <div class="footer-bottom-links">
+            <p>Design by Turki.</p>
+          </div>
         </div>
       </div>
     </footer>

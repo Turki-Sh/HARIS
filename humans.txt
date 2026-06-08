@@ -20,7 +20,7 @@ JavaScript
 GitHub Pages
 
 Project:
-HARIS is a university graduation project from Imam Abdulrahman Bin Faisal University focused on hostile activity recognition in CCTV footage through an auditable computer vision pipeline.
+HARIS is a system focused on hostile activity recognition in CCTV footage through an auditable computer vision pipeline.
 
 Last updated:
 2026-05-29
