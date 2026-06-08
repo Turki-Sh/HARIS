@@ -2413,15 +2413,14 @@
 
         <script>
           (function() {
-            // TODO swap duplicates for real clips (Ensure clips are capped at 720p)
-            // Using 6 slots to ensure flawless alternating 1-2-1-2 cycling.
+            // Using 6 slots to ensure flawless cycling geometry without repeating adjacent feeds.
             const clips = [
-              { label: 'Cam 01', src: './assets/demo/HARIS_Multi_Person_Tracking_Baseline_clip_02.mp4' },
-              { label: 'Cam 02', src: './assets/demo/HARIS_Reference_Kicking_Detection_clip_01.mp4' },
-              { label: 'Cam 03', src: './assets/demo/HARIS_Multi_Person_Tracking_Baseline_clip_02.mp4' },
-              { label: 'Cam 04', src: './assets/demo/HARIS_Reference_Kicking_Detection_clip_01.mp4' },
-              { label: 'Cam 05', src: './assets/demo/HARIS_Multi_Person_Tracking_Baseline_clip_02.mp4' },
-              { label: 'Cam 06', src: './assets/demo/HARIS_Reference_Kicking_Detection_clip_01.mp4' }
+              { label: 'Cam 01', src: './assets/demo/haris-annotated-1.mp4' },
+              { label: 'Cam 02', src: './assets/demo/haris-annotated-2.mp4' },
+              { label: 'Cam 03', src: './assets/demo/haris-annotated-3.mp4' },
+              { label: 'Cam 04', src: './assets/demo/haris-annotated-4.mp4' },
+              { label: 'Cam 05', src: './assets/demo/haris-annotated-1.mp4' },
+              { label: 'Cam 06', src: './assets/demo/haris-annotated-2.mp4' }
             ];
 
             const wrapper = document.getElementById('cf-wrapper');
