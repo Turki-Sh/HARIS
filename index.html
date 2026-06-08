@@ -2294,24 +2294,29 @@
             pointer-events: none;
           }
           .card-center {
-            transform: translateZ(0) scale(1);
+            transform: translateX(0) translateZ(0) scale(1) rotateY(0deg);
             filter: brightness(1) saturate(1);
+            box-shadow: 0 0 0 2px var(--accent), 0 30px 60px rgba(0, 0, 0, 0.8);
             z-index: 10;
           }
           .card-left-1 {
-            transform: translateX(-40%) translateZ(-200px) rotateY(25deg) scale(0.8);
+            transform: translateX(-35%) translateZ(-300px) rotateY(45deg) scale(0.62);
+            filter: brightness(0.6) saturate(0.5);
             z-index: 5;
           }
           .card-left-2 {
-            transform: translateX(-70%) translateZ(-400px) rotateY(35deg) scale(0.6);
+            transform: translateX(-55%) translateZ(-600px) rotateY(55deg) scale(0.45);
+            filter: brightness(0.4) saturate(0.3);
             z-index: 4;
           }
           .card-right-1 {
-            transform: translateX(40%) translateZ(-200px) rotateY(-25deg) scale(0.8);
+            transform: translateX(35%) translateZ(-300px) rotateY(-45deg) scale(0.62);
+            filter: brightness(0.6) saturate(0.5);
             z-index: 5;
           }
           .card-right-2 {
-            transform: translateX(70%) translateZ(-400px) rotateY(-35deg) scale(0.6);
+            transform: translateX(55%) translateZ(-600px) rotateY(-55deg) scale(0.45);
+            filter: brightness(0.4) saturate(0.3);
             z-index: 4;
           }
           .cf-controls {
