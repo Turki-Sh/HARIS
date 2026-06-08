@@ -2464,17 +2464,33 @@
 
               fsBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (!document.fullscreenElement) {
-                  card.requestFullscreen().catch(err => console.log(err));
+                const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+                if (!isFs) {
+                  if (card.requestFullscreen) {
+                    card.requestFullscreen().catch(err => console.log(err));
+                  } else if (card.webkitRequestFullscreen) { /* iPad Safari */
+                    card.webkitRequestFullscreen();
+                  } else if (video.webkitEnterFullscreen) { /* iPhone Safari */
+                    video.webkitEnterFullscreen();
+                  }
                 } else {
-                  document.exitFullscreen();
+                  if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                  } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                  }
                 }
               });
 
-              card.addEventListener('fullscreenchange', () => {
-                fsBtn.innerHTML = document.fullscreenElement ? exitFsIcon : fsIcon;
-                fsBtn.setAttribute('aria-label', document.fullscreenElement ? 'Exit Fullscreen' : 'Fullscreen');
-              });
+              const updateFsIcon = () => {
+                const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+                fsBtn.innerHTML = isFs ? exitFsIcon : fsIcon;
+                fsBtn.setAttribute('aria-label', isFs ? 'Exit Fullscreen' : 'Fullscreen');
+              };
+
+              card.addEventListener('fullscreenchange', updateFsIcon);
+              card.addEventListener('webkitfullscreenchange', updateFsIcon);
+              video.addEventListener('webkitendfullscreen', updateFsIcon); /* iOS native exit */
 
               const lockAndFocus = (targetIndex = i) => {
                 if (!isLocked) {
