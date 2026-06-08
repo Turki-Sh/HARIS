@@ -2174,6 +2174,7 @@
         </button>
         <nav id="primary-nav" class="nav-links" aria-label="Page sections">
           <a href="#problem">Problem</a>
+          <a href="#in-action">In Action</a>
           <a href="#pipeline">Pipeline</a>
           <a href="#results">Results</a>
           <a href="#features">Features</a>
@@ -2257,11 +2258,265 @@
         </div>
       </section>
 
+      <section id="in-action" class="section-pad" aria-labelledby="action-title">
+        <style>
+          .coverflow-wrapper {
+            position: relative;
+            width: 100%;
+            height: 55vh;
+            min-height: 400px;
+            max-height: 720px;
+            perspective: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 3rem;
+          }
+          .coverflow-card {
+            position: absolute;
+            width: 60%;
+            max-width: 900px;
+            aspect-ratio: 16/9;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.6s ease, opacity 0.6s ease;
+            cursor: pointer;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--surface);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            filter: brightness(0.7) saturate(0.5);
+          }
+          .coverflow-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+          }
+          .card-center {
+            transform: translateZ(0) scale(1);
+            filter: brightness(1) saturate(1);
+            z-index: 10;
+          }
+          .card-left-1 {
+            transform: translateX(-40%) translateZ(-200px) rotateY(25deg) scale(0.8);
+            z-index: 5;
+          }
+          .card-left-2 {
+            transform: translateX(-70%) translateZ(-400px) rotateY(35deg) scale(0.6);
+            z-index: 4;
+          }
+          .card-right-1 {
+            transform: translateX(40%) translateZ(-200px) rotateY(-25deg) scale(0.8);
+            z-index: 5;
+          }
+          .card-right-2 {
+            transform: translateX(70%) translateZ(-400px) rotateY(-35deg) scale(0.6);
+            z-index: 4;
+          }
+          .cf-controls {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 20;
+          }
+          .card-center:hover .cf-controls,
+          .cf-controls:focus-within {
+            opacity: 1;
+          }
+          .cf-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--line);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: background 0.2s;
+          }
+          .cf-btn:hover, .cf-btn:focus-visible {
+            background: var(--accent);
+          }
+          .coverflow-card:fullscreen {
+            border-radius: 0;
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
+            background: #000;
+          }
+          .coverflow-card:fullscreen .cf-controls {
+            opacity: 1;
+          }
+        </style>
+
+        <div class="container-shell">
+          <div class="section-head reveal">
+            <div>
+              <p class="section-kicker">02 In Action</p>
+              <h2 id="action-title" class="section-title">See the system working.</h2>
+            </div>
+            <p class="section-copy">
+              Real footage processed by the HARIS pipeline.
+            </p>
+          </div>
+        </div>
+
+        <div class="coverflow-wrapper" id="cf-wrapper"></div>
+
+        <script>
+          (function() {
+            // TODO swap duplicates for real clips (Ensure clips are capped at 720p)
+            const clips = [
+              { label: 'Cam 01', src: './assets/demo/HARIS_Multi_Person_Tracking_Baseline_clip_02.mp4' },
+              { label: 'Cam 02', src: './assets/demo/HARIS_Reference_Kicking_Detection_clip_01.mp4' },
+              { label: 'Cam 03', src: './assets/demo/HARIS_Multi_Person_Tracking_Baseline_clip_02.mp4' },
+              { label: 'Cam 04', src: './assets/demo/HARIS_Reference_Kicking_Detection_clip_01.mp4' },
+              { label: 'Cam 05', src: './assets/demo/HARIS_Multi_Person_Tracking_Baseline_clip_02.mp4' }
+            ];
+
+            const wrapper = document.getElementById('cf-wrapper');
+            let currentIndex = 2;
+            let cycleInterval = null;
+            let isLocked = false;
+            const cards = [];
+
+            const volIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`;
+            const muteIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
+            const fsIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
+            const exitFsIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>`;
+
+            clips.forEach((clip, i) => {
+              const card = document.createElement('div');
+              card.className = 'coverflow-card';
+              card.setAttribute('tabindex', '0');
+              card.setAttribute('role', 'button');
+              card.setAttribute('aria-label', 'Play ' + clip.label);
+              
+              const video = document.createElement('video');
+              video.src = clip.src;
+              video.muted = true;
+              video.loop = true;
+              video.preload = 'metadata';
+              video.playsInline = true;
+              
+              const controls = document.createElement('div');
+              controls.className = 'cf-controls';
+              
+              const muteBtn = document.createElement('button');
+              muteBtn.className = 'cf-btn';
+              muteBtn.innerHTML = muteIcon;
+              muteBtn.setAttribute('aria-label', 'Unmute');
+              
+              const fsBtn = document.createElement('button');
+              fsBtn.className = 'cf-btn';
+              fsBtn.innerHTML = fsIcon;
+              fsBtn.setAttribute('aria-label', 'Fullscreen');
+              
+              controls.appendChild(muteBtn);
+              controls.appendChild(fsBtn);
+              
+              card.appendChild(video);
+              card.appendChild(controls);
+              wrapper.appendChild(card);
+              cards.push({ card, video, muteBtn, fsBtn });
+
+              muteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                video.muted = !video.muted;
+                muteBtn.innerHTML = video.muted ? muteIcon : volIcon;
+                muteBtn.setAttribute('aria-label', video.muted ? 'Unmute' : 'Mute');
+              });
+
+              fsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!document.fullscreenElement) {
+                  card.requestFullscreen().catch(err => console.log(err));
+                } else {
+                  document.exitFullscreen();
+                }
+              });
+
+              card.addEventListener('fullscreenchange', () => {
+                fsBtn.innerHTML = document.fullscreenElement ? exitFsIcon : fsIcon;
+                fsBtn.setAttribute('aria-label', document.fullscreenElement ? 'Exit Fullscreen' : 'Fullscreen');
+              });
+
+              const lockAndFocus = () => {
+                if (!isLocked) {
+                  isLocked = true;
+                  clearInterval(cycleInterval);
+                  video.muted = false;
+                  muteBtn.innerHTML = volIcon;
+                  muteBtn.setAttribute('aria-label', 'Mute');
+                }
+                currentIndex = i;
+                updatePositions();
+              };
+
+              card.addEventListener('click', lockAndFocus);
+              card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  lockAndFocus();
+                }
+              });
+            });
+
+            function updatePositions() {
+              cards.forEach((item, i) => {
+                let offset = i - currentIndex;
+                
+                // Wrap offsets for 5 items so they loop visually across the arc
+                if (offset < -2) offset += 5;
+                if (offset > 2) offset -= 5;
+
+                item.card.className = 'coverflow-card';
+                if (offset === 0) {
+                  item.card.classList.add('card-center');
+                  item.card.setAttribute('aria-current', 'true');
+                  item.video.play().catch(() => {});
+                } else {
+                  item.card.setAttribute('aria-current', 'false');
+                  if (offset === -1) {
+                    item.card.classList.add('card-left-1');
+                    item.video.play().catch(() => {});
+                  } else if (offset === -2) {
+                    item.card.classList.add('card-left-2');
+                    item.video.pause();
+                  } else if (offset === 1) {
+                    item.card.classList.add('card-right-1');
+                    item.video.play().catch(() => {});
+                  } else if (offset === 2) {
+                    item.card.classList.add('card-right-2');
+                    item.video.pause();
+                  }
+                }
+              });
+            }
+
+            updatePositions();
+
+            cycleInterval = setInterval(() => {
+              currentIndex = (currentIndex + 1) % cards.length;
+              updatePositions();
+            }, 2600);
+          })();
+        </script>
+      </section>
+
       <section id="pipeline" class="section-pad" aria-labelledby="pipeline-title">
         <div class="container-shell">
           <div class="section-head reveal">
             <div>
-              <p class="section-kicker">02 The pipeline</p>
+              <p class="section-kicker">03 The pipeline</p>
               <h2 id="pipeline-title" class="section-title">Four tiers, structured evidence.</h2>
             </div>
             <p class="section-copy">
@@ -2339,7 +2594,7 @@
         <div class="container-shell">
           <div class="section-head reveal">
             <div>
-              <p class="section-kicker">03 Measured results</p>
+              <p class="section-kicker">04 Measured results</p>
               <h2 id="results-title" class="section-title">Paper numbers, not brochure numbers.</h2>
             </div>
             <p class="section-copy">
@@ -2428,7 +2683,7 @@
         <div class="container-shell">
           <div class="section-head reveal">
             <div>
-              <p class="section-kicker">04 Operator-facing features</p>
+              <p class="section-kicker">05 Operator-facing features</p>
               <h2 id="features-title" class="section-title">Built like an operator surface.</h2>
             </div>
             <p class="section-copy">
@@ -2505,7 +2760,7 @@
         <div class="container-shell">
           <div class="section-head reveal">
             <div>
-              <p class="section-kicker">05 What makes HARIS different</p>
+              <p class="section-kicker">06 What makes HARIS different</p>
               <h2 id="different-title" class="section-title">Traceable by design.</h2>
             </div>
             <p class="section-copy">
@@ -2557,7 +2812,7 @@
         <div class="container-shell">
           <div class="section-head reveal">
             <div>
-              <p class="section-kicker">06 Roadmap</p>
+              <p class="section-kicker">07 Roadmap</p>
               <h2 id="roadmap-title" class="section-title">Published core, planned extensions.</h2>
             </div>
             <p class="section-copy">
@@ -2623,7 +2878,7 @@
         <div class="container-shell">
           <div class="section-head reveal">
             <div>
-              <p class="section-kicker">07 Honest limitations</p>
+              <p class="section-kicker">08 Honest limitations</p>
               <h2 id="limitations-title" class="section-title">Operational caps are part of the product.</h2>
             </div>
             <p class="section-copy">
@@ -2683,7 +2938,7 @@
         <div class="container-shell">
           <div class="section-head reveal">
             <div>
-              <p class="section-kicker">08 Team</p>
+              <p class="section-kicker">09 Team</p>
               <h2 id="team-title" class="section-title">Five developers, one system.</h2>
             </div>
           </div>
@@ -2819,6 +3074,7 @@
               <h4>System</h4>
               <ul>
                 <li><a href="#problem">Problem</a></li>
+                <li><a href="#in-action">In Action</a></li>
                 <li><a href="#pipeline">Pipeline</a></li>
                 <li><a href="#features">Features</a></li>
               </ul>
