@@ -2275,6 +2275,7 @@
             justify-content: center;
             overflow: hidden;
             margin-top: 1.5rem;
+            touch-action: pan-y; /* Prevent browser handling horizontal swipes */
           }
           .coverflow-card {
             position: absolute;
@@ -2364,52 +2365,31 @@
             opacity: 1;
           }
 
-          /* Mobile Nav Indicators */
-          .mobile-dots {
-            display: none;
-          }
-
-          /* Responsive Mobile Layout */
+          /* Responsive Mobile Coverflow */
           @media (max-width: 768px) {
             .coverflow-wrapper {
-              flex-direction: column;
-              height: auto;
-              min-height: 0;
-              perspective: none;
-              padding: 0 1rem;
+              height: 40vh;
+              min-height: 250px;
+              perspective: 1000px;
             }
             .coverflow-card {
-              position: static;
-              width: 100%;
-              max-width: 100%;
-              aspect-ratio: 16/9;
-              transform: none !important;
-              filter: none !important;
-              display: none;
-              margin-bottom: 1rem;
+              width: 70%; /* Narrows the center card so neighbors peek in cleanly */
             }
-            .coverflow-card.card-center {
-              display: block;
-              box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            .card-left-1 {
+              transform: translateX(-65%) translateZ(-150px) rotateY(18deg) scale(0.85);
             }
-            .mobile-dots {
-              display: flex;
-              gap: 0.5rem;
-              justify-content: center;
-              width: 100%;
-              padding: 1rem 0;
+            .card-right-1 {
+              transform: translateX(65%) translateZ(-150px) rotateY(-18deg) scale(0.85);
             }
-            .dot {
-              width: 8px;
-              height: 8px;
-              border-radius: 50%;
-              background: var(--muted-2);
-              cursor: pointer;
-              transition: background 0.3s, transform 0.3s;
+            .card-left-2 {
+              transform: translateX(-100%) translateZ(-300px) rotateY(25deg) scale(0.6);
+              opacity: 0;
+              pointer-events: none;
             }
-            .dot.active {
-              background: var(--accent);
-              transform: scale(1.2);
+            .card-right-2 {
+              transform: translateX(100%) translateZ(-300px) rotateY(-25deg) scale(0.6);
+              opacity: 0;
+              pointer-events: none;
             }
           }
         </style>
@@ -2427,7 +2407,6 @@
         </div>
 
         <div class="coverflow-wrapper" id="cf-wrapper"></div>
-        <div class="mobile-dots" id="mobile-dots"></div>
 
         <script>
           (function() {
@@ -2443,12 +2422,10 @@
             ];
 
             const wrapper = document.getElementById('cf-wrapper');
-            const dotsWrapper = document.getElementById('mobile-dots');
             let currentIndex = 2;
             let cycleInterval = null;
             let isLocked = false;
             const cards = [];
-            const dots = [];
 
             const fsIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>`;
             const exitFsIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>`;
@@ -2482,20 +2459,6 @@
               wrapper.appendChild(card);
               cards.push({ card, video, fsBtn });
 
-              // Only create 5 dots since 6th is always the hidden duplicate
-              if (i < 5) {
-                const dot = document.createElement('div');
-                dot.className = 'dot';
-                dot.setAttribute('aria-label', 'Show ' + clip.label);
-                dotsWrapper.appendChild(dot);
-                dots.push(dot);
-
-                dot.addEventListener('click', (e) => {
-                  e.stopPropagation();
-                  lockAndFocus(i);
-                });
-              }
-
               fsBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (!document.fullscreenElement) {
@@ -2515,7 +2478,7 @@
                   isLocked = true;
                   clearInterval(cycleInterval);
                 }
-                currentIndex = targetIndex;
+                currentIndex = (targetIndex + cards.length) % cards.length;
                 updatePositions();
               };
 
@@ -2526,6 +2489,37 @@
                   lockAndFocus();
                 }
               });
+            });
+
+            // Swipe logic for touch devices
+            let startX = 0;
+            let endX = 0;
+            const SWIPE_THRESHOLD = 40;
+
+            wrapper.addEventListener('touchstart', (e) => {
+              startX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            wrapper.addEventListener('touchmove', (e) => {
+              endX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            wrapper.addEventListener('touchend', (e) => {
+              endX = e.changedTouches[0].screenX;
+              const diff = endX - startX;
+              if (Math.abs(diff) > SWIPE_THRESHOLD) {
+                if (diff > 0) {
+                  // Swiped right -> go to previous
+                  if (!isLocked) { isLocked = true; clearInterval(cycleInterval); }
+                  currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+                  updatePositions();
+                } else {
+                  // Swiped left -> go to next
+                  if (!isLocked) { isLocked = true; clearInterval(cycleInterval); }
+                  currentIndex = (currentIndex + 1) % cards.length;
+                  updatePositions();
+                }
+              }
             });
 
             function updatePositions() {
@@ -2564,19 +2558,6 @@
                     item.card.style.pointerEvents = 'none';
                     item.video.pause();
                   }
-                }
-              });
-
-              // Update mobile dots (mapped strictly to the first 5 visual items)
-              dots.forEach((dot, i) => {
-                let actualFocus = currentIndex;
-                // If the hidden 6th slot (index 5) is active, map its dot to index 0 visually
-                if (actualFocus === 5) actualFocus = 0;
-                
-                if (i === actualFocus) {
-                  dot.classList.add('active');
-                } else {
-                  dot.classList.remove('active');
                 }
               });
             }
