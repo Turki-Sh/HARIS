@@ -2303,22 +2303,22 @@
             z-index: 10;
           }
           .card-left-1 {
-            transform: translateX(-30%) translateZ(-300px) rotateY(48deg) scale(0.62);
-            filter: brightness(0.6) saturate(0.5);
+            transform: translateX(-55%) translateZ(-300px) rotateY(45deg) scale(0.62);
+            filter: brightness(0.7) saturate(0.5);
             z-index: 5;
           }
           .card-left-2 {
-            transform: translateX(-48%) translateZ(-600px) rotateY(60deg) scale(0.45);
+            transform: translateX(-85%) translateZ(-600px) rotateY(55deg) scale(0.45);
             filter: brightness(0.4) saturate(0.3);
             z-index: 4;
           }
           .card-right-1 {
-            transform: translateX(30%) translateZ(-300px) rotateY(-48deg) scale(0.62);
-            filter: brightness(0.6) saturate(0.5);
+            transform: translateX(55%) translateZ(-300px) rotateY(-45deg) scale(0.62);
+            filter: brightness(0.7) saturate(0.5);
             z-index: 5;
           }
           .card-right-2 {
-            transform: translateX(48%) translateZ(-600px) rotateY(-60deg) scale(0.45);
+            transform: translateX(85%) translateZ(-600px) rotateY(-55deg) scale(0.45);
             filter: brightness(0.4) saturate(0.3);
             z-index: 4;
           }
@@ -2382,12 +2382,14 @@
         <script>
           (function() {
             // TODO swap duplicates for real clips (Ensure clips are capped at 720p)
+            // Using 6 slots to ensure flawless alternating 1-2-1-2 cycling.
             const clips = [
               { label: 'Cam 01', src: './assets/demo/HARIS_Multi_Person_Tracking_Baseline_clip_02.mp4' },
               { label: 'Cam 02', src: './assets/demo/HARIS_Reference_Kicking_Detection_clip_01.mp4' },
               { label: 'Cam 03', src: './assets/demo/HARIS_Multi_Person_Tracking_Baseline_clip_02.mp4' },
               { label: 'Cam 04', src: './assets/demo/HARIS_Reference_Kicking_Detection_clip_01.mp4' },
-              { label: 'Cam 05', src: './assets/demo/HARIS_Multi_Person_Tracking_Baseline_clip_02.mp4' }
+              { label: 'Cam 05', src: './assets/demo/HARIS_Multi_Person_Tracking_Baseline_clip_02.mp4' },
+              { label: 'Cam 06', src: './assets/demo/HARIS_Reference_Kicking_Detection_clip_01.mp4' }
             ];
 
             const wrapper = document.getElementById('cf-wrapper');
@@ -2482,11 +2484,14 @@
               cards.forEach((item, i) => {
                 let offset = i - currentIndex;
                 
-                // Wrap offsets for 5 items so they loop visually across the arc
-                if (offset < -2) offset += 5;
-                if (offset > 2) offset -= 5;
+                // Wrap offsets for 6 items so they loop visually across the arc
+                while (offset < -2) offset += 6;
+                while (offset > 3) offset -= 6;
 
                 item.card.className = 'coverflow-card';
+                item.card.style.opacity = '1';
+                item.card.style.pointerEvents = 'auto';
+
                 if (offset === 0) {
                   item.card.classList.add('card-center');
                   item.card.setAttribute('aria-current', 'true');
@@ -2504,6 +2509,11 @@
                     item.video.play().catch(() => {});
                   } else if (offset === 2) {
                     item.card.classList.add('card-right-2');
+                    item.video.pause();
+                  } else {
+                    // Hide the 6th background slot completely so it doesn't receive clicks
+                    item.card.style.opacity = '0';
+                    item.card.style.pointerEvents = 'none';
                     item.video.pause();
                   }
                 }
