@@ -2258,8 +2258,11 @@
         </div>
       </section>
 
-      <section id="in-action" class="section-pad" aria-labelledby="action-title">
+      <section id="in-action" class="section-pad" aria-labelledby="action-title" style="padding-bottom: 2rem;">
         <style>
+          #in-action {
+            padding-top: 4rem; /* Reduced from the standard 8rem section-pad */
+          }
           .coverflow-wrapper {
             position: relative;
             width: 100%;
@@ -2271,7 +2274,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            margin-top: 3rem;
+            margin-top: 1.5rem;
           }
           .coverflow-card {
             position: absolute;
@@ -2300,22 +2303,22 @@
             z-index: 10;
           }
           .card-left-1 {
-            transform: translateX(-35%) translateZ(-300px) rotateY(45deg) scale(0.62);
+            transform: translateX(-30%) translateZ(-300px) rotateY(48deg) scale(0.62);
             filter: brightness(0.6) saturate(0.5);
             z-index: 5;
           }
           .card-left-2 {
-            transform: translateX(-55%) translateZ(-600px) rotateY(55deg) scale(0.45);
+            transform: translateX(-48%) translateZ(-600px) rotateY(60deg) scale(0.45);
             filter: brightness(0.4) saturate(0.3);
             z-index: 4;
           }
           .card-right-1 {
-            transform: translateX(35%) translateZ(-300px) rotateY(-45deg) scale(0.62);
+            transform: translateX(30%) translateZ(-300px) rotateY(-48deg) scale(0.62);
             filter: brightness(0.6) saturate(0.5);
             z-index: 5;
           }
           .card-right-2 {
-            transform: translateX(55%) translateZ(-600px) rotateY(-55deg) scale(0.45);
+            transform: translateX(48%) translateZ(-600px) rotateY(-60deg) scale(0.45);
             filter: brightness(0.4) saturate(0.3);
             z-index: 4;
           }
@@ -2369,7 +2372,7 @@
               <h2 id="action-title" class="section-title">See the system working.</h2>
             </div>
             <p class="section-copy">
-              Real footage processed by the HARIS pipeline.
+              Real CCTV footage, annotated live by HARIS. Click any feed to focus it.
             </p>
           </div>
         </div>
